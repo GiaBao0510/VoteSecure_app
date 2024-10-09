@@ -50,7 +50,7 @@ class LoginRepository with ChangeNotifier {
       if(res.statusCode == 200){
         verify.Email = thongTinPhanHoi['email'];
         verify.Phone = user.account;
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> VerificationCodeScreen(verifyOtp: verify) ));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> VerificationCodeScreen(verifyOtp: verify, Email: verify.Email ?? '',) ));
 
       }else if(res.statusCode == 400 ){
         QuickAlert.show(

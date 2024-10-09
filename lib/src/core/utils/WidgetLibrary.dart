@@ -136,4 +136,40 @@ class WidgetlibraryState extends State<Widgetlibrary> {
     );
   }
 
+  //Xây dựng nút chức năng
+  Widget buildMenuItem(BuildContext context ,String title, IconData icon, String path) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, path);
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xff44a4fd), Color(0xff3f5efb)],
+                    stops: [0.25, 0.75],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(10)
+              ),
+              height: 50,
+              width: 50,
+              child: Icon(icon, size: 40,color: Colors.white,)
+          ),
+          SizedBox(height: 8),
+          FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text(
+                title, style: TextStyle(fontSize: 15),
+                textAlign: TextAlign.center,
+              )
+          ),
+        ],
+      ),
+    );
+  }
+
 }

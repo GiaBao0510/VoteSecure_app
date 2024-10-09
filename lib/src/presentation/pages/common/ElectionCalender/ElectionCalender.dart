@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';  // Sử dụng package này để hiển thị lịch
-import 'package:google_fonts/google_fonts.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
-import 'package:votesecure/src/presentation/pages/common/ElectionCalender/ElectionCalender.dart';
+import 'package:votesecure/src/data/models/ElectionModel.dart';
+import 'package:votesecure/src/domain/repositories/UserRepository.dart';
 import 'package:votesecure/src/presentation/widgets/TitleAppBar.dart';
 
 class ElectioncalenderScreen extends StatefulWidget {
@@ -18,12 +19,64 @@ class _ElectioncalenderScreenState extends State<ElectioncalenderScreen> {
   DateTime _selectedDay = DateTime.now(); // Ngày hiện tại
   CalendarFormat _calendarFormat = CalendarFormat.month; // Định dạng lịch
   WidgetlibraryState widgetLibraryState = WidgetlibraryState();
+  Map<DateTime, List<ElectionModel>> _events = {};
+  final UserRepository userRepository = UserRepository();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAndSetEvents();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _fetchAndSetEvents() async {
+    List<ElectionModel> elections = await userRepository.getListOfFuture_Elections(context);
+    _addEvents(elections);
+  }
+
+  //Thêm sự kiện vào lịch
+  void _addEvents(List<ElectionModel> elections){
+    _events.clear();
+
+    for(var election in elections){
+      //Định dạng lại ngày tháng năm
+      DateTime ngayBD = DateTime(election.ngayBD.year, election.ngayBD.month, election.ngayBD.day);
+      DateTime ngayKT = DateTime(election.ngayKT.year, election.ngayKT.month, election.ngayKT.day);
+      print("Parsed ngayBD: ${election.ngayBD}, ngayKT: ${election.ngayKT}");
+
+      // Add ngayBD to the events map
+      if (_events[ngayBD] == null) {
+        _events[ngayBD] = [];
+      }
+      _events[ngayBD]!.add(election);
+
+      // Add ngayKT to the events map if it's different from ngayBD
+      if (!isSameDay(ngayBD, ngayKT)) {
+        if (_events[ngayKT] == null) {
+          _events[ngayKT] = [];
+        }
+        _events[ngayKT]!.add(election);
+      }
+      setState(() {});
+    }
+  }
 
   void _onDaySelected(DateTime day, DateTime focusedDay) {
     setState(() {
       _selectedDay = day;
     });
-    _showBottomSheet(context, day);
+
+    //Lấy danh sách ngày được chọn
+    List<ElectionModel>? events = _events[day];
+    if (events != null && events.isNotEmpty) {
+      _showBottomSheet(context, day, events);
+    } else {
+      _showBottomSheet(context, day, []);
+    }
   }
 
   // Cập nhật ngày hiện tại dựa trên tháng được chọn
@@ -34,7 +87,7 @@ class _ElectioncalenderScreenState extends State<ElectioncalenderScreen> {
   }
 
   //Hiển thị thông tin cụ thể về ngày
-  void _showBottomSheet(BuildContext context, DateTime day) {
+  void _showBottomSheet(BuildContext context, DateTime day, List<ElectionModel> events) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -49,15 +102,19 @@ class _ElectioncalenderScreenState extends State<ElectioncalenderScreen> {
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
-              Text('Class: Math'),
-              Text('Time: 8:00 AM - 10:00 AM'),
-              Text('Room: 302'),
-              // Bạn có thể tùy chỉnh thêm thông tin chi tiết tại đây
+              ...events.map((election) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Tên kỳ bầu cử: ${election.tenKyBauCu ?? 'null'}'),
+                  Text('Mô tả: ${election.mota ?? 'null'}'),
+                  SizedBox(height: 10),
+                ],
+              )),
             ],
           ),
         );
       },
-      isScrollControlled: true, // Cho phép kéo bảng lên cao hơn
+      isScrollControlled: true,
     );
   }
 
@@ -101,7 +158,7 @@ class _ElectioncalenderScreenState extends State<ElectioncalenderScreen> {
   }
 
   //Xây dựng phần hiển thị lịch
-  Widget _buildElectionCalendar(BuildContext context){
+  Widget _buildElectionCalendar(BuildContext context) {
     return TableCalendar(
       firstDay: DateTime.utc(1990, 1, 1),
       lastDay: DateTime.utc(2100, 12, 31),
@@ -110,12 +167,53 @@ class _ElectioncalenderScreenState extends State<ElectioncalenderScreen> {
       selectedDayPredicate: (day) {
         return isSameDay(_selectedDay, day);
       },
+      eventLoader: (day) {
+        return _events[day] ?? [];
+      },
       onDaySelected: _onDaySelected,
       onFormatChanged: (format) {
         setState(() {
           _calendarFormat = format;
         });
       },
+      calendarBuilders: CalendarBuilders(
+        markerBuilder: (context, date, events) {
+          // Check if the current date is ngayBD or ngayKT
+          bool isNgayBD = _events[date]?.any((e) => isSameDay(date, e.ngayBD)) ?? false;
+          bool isNgayKT = _events[date]?.any((e) => isSameDay(date, e.ngayKT)) ?? false;
+
+          // Show markers based on the conditions
+          if (isNgayBD && isNgayKT) {
+            return Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.purple, // Use a combined color if both dates match
+              ),
+              width: 16,
+              height: 16,
+            );
+          } else if (isNgayBD) {
+            return Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.blue, // Blue for start date
+              ),
+              width: 16,
+              height: 16,
+            );
+          } else if (isNgayKT) {
+            return Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.yellow, // Yellow for end date
+              ),
+              width: 16,
+              height: 16,
+            );
+          }
+          return null; // No marker
+        },
+      ),
       headerStyle: HeaderStyle(
         formatButtonVisible: false,
         titleCentered: true,

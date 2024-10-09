@@ -10,13 +10,15 @@ import 'package:provider/provider.dart';
 class VerificationCodeScreen extends StatefulWidget {
   static const routeName = "/verification-after-login";
   final verifyOtpModel verifyOtp;
+  final String Email;
   const VerificationCodeScreen({
     super.key,
-    required this.verifyOtp
+    required this.verifyOtp,
+    required this.Email
   });
 
   @override
-  _VerificationCodeScreenState createState() => _VerificationCodeScreenState(verifyOtp: verifyOtp);
+  _VerificationCodeScreenState createState() => _VerificationCodeScreenState(verifyOtp: verifyOtp,Email: Email);
 }
 
 class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
@@ -27,8 +29,9 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   int countdown = 30;
   Timer? _timer;
   final verifyOtpModel verifyOtp;
+  final String Email;
 
-  _VerificationCodeScreenState({required this.verifyOtp});
+  _VerificationCodeScreenState({required this.verifyOtp, required this.Email});
 
   //hàm na dùng để bat đầu đếm ngược
   void startCountDown(){
@@ -189,7 +192,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 shadowColor:  isButtonDisabled ? Colors.grey : Colors.transparent,  //Điều chỉnh độ mo nút
                 elevation: isButtonDisabled ? 5:0
             ),
-            onPressed: isButtonDisabled ? null : () {
+            onPressed: isButtonDisabled ? null : () async {
               setState(() {
                 startCountDown();
               });
@@ -200,7 +203,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 });
               });
 
-              print("Đã gửi lai mã");
+              await workWithOtpRepository.ResendOtp(context, Email);
+              print("Đã gửi lai mã đến email: $Email");
 
             },
             child: Text(

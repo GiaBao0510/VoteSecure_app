@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
+import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/data/models/VerifyOtpModel.dart';
 import 'package:votesecure/src/domain/repositories/Token_Repositories.dart';
 import 'package:votesecure/src/presentation/pages/cadre/HomCadre.dart';
@@ -47,10 +48,12 @@ class WorkWithOtpRepository with ChangeNotifier{
       Navigator.of(context).pop();
 
       final thongTinPhanHoi = jsonDecode(res.body);
+      print(res.body);
       String message = thongTinPhanHoi['message'];
 
       //Nếu xác thực thành công thì lưu accessToken và refresh token vào thiết bị
       if (res.statusCode == 200) {
+        print(' - Xác thực mã otp thành công');
         await _saveTokens(res);
         await _navigateToPage(context, thongTinPhanHoi);
 
@@ -100,6 +103,7 @@ class WorkWithOtpRepository with ChangeNotifier{
   //Kiểm tra vai trò người dùng rồi chuyển sang page dựa trên vai trò
   Future<void> _navigateToPage(BuildContext context, Map<String, dynamic> responseData) async {
     final accessToken = await _tokenRepository.getAccessToken();
+    ProfileModel user = ProfileModel(SDT: 'null',HoTen: 'null',GioiTinh: 'null',Email:'null', DiaChi: 'null',HinhAnh: 'null',NgaySinh: DateTime.now(),TenDanToc: 'null');
     if (accessToken != null) {
       final decodedToken = JwtDecoder.decode(accessToken);
 
@@ -113,19 +117,57 @@ class WorkWithOtpRepository with ChangeNotifier{
       await pref.setString('UserPhone', phone);
       await pref.setString('UserEmail', email);
 
-      switch (role) {
-        case "2":
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Homecadidate()));
-          break;
-        case "5":
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const homeVoter()));
-          break;
-        case "8":
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeCadre()));
-          break;
-        default:
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const loginPages()));
-          break;
+      //Lấy thông tin người dùng dựa trên email
+      String uri = GetPersonalInformationBasedOnEmail+email;
+      print("Path: ${uri}");
+      var res = await http.get(
+          Uri.parse(uri),
+          headers: {
+            "Content-Type":"application/json",
+            "Authorization": "Bearer $accessToken",
+          },
+      );
+      print(res.body);
+      final thongTinPhanHoi = jsonDecode(res.body);
+
+      if(res.statusCode == 200){
+        print("Lấy thông tin người dùng thành công");
+
+        user = ProfileModel(
+            HoTen: thongTinPhanHoi['data']['hoTen'],
+            TenDanToc: thongTinPhanHoi['data']['tenDanToc'],
+            NgaySinh: DateTime.parse(thongTinPhanHoi['data']['ngaySinh']),
+            HinhAnh: thongTinPhanHoi['data']['hinhAnh'],
+            DiaChi: thongTinPhanHoi['data']['diaChiLienLac'],
+            GioiTinh: thongTinPhanHoi['data']['gioiTinh'],
+            SDT: thongTinPhanHoi['data']['sdt'],
+            Email: thongTinPhanHoi['data']['email']
+        );
+
+        // print("----- Thông tin người dùng ----------");
+        // print('hoTen: ${user.HoTen}');
+        // print('TenDanToc: ${user.TenDanToc}');
+        // print('NgaySinh: ${user.NgaySinh}');
+        // print('HinhAnh: ${user.HinhAnh}');
+        // print('GioiTinh: ${user.GioiTinh}');
+        // print('SDT: ${user.SDT}');
+        // print('Email: ${user.Email}');
+        // print('----------------------------------------');
+
+        switch (role) {
+          case "2":
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Homecadidate()));
+            break;
+          case "5":
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>  homeVoter(user: user,)));
+            break;
+          case "8":
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomeCadre()));
+            break;
+          default:
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const loginPages()));
+            break;
+        }
       }
     } else {
       Navigator.push(context, MaterialPageRoute(builder: (context) => const loginPages()));

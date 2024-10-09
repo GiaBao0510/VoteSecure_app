@@ -11,7 +11,7 @@ import 'package:votesecure/src/config/AppConfig_api.dart';
 
 class VoterRepository with ChangeNotifier{
 
-  //Hàm kiểm tra xem mã c tri tồn taại khong
+  //1.Hàm kiểm tra xem mã c tri tồn taại khong
   Future<Voterinformationafterscaningmodel?> DisplayUserInformationAfterScanning(BuildContext context, String ID_cuTri)async{
     try{
       Voterinformationafterscaningmodel user = new Voterinformationafterscaningmodel('','','',DateTime.now(),'','','','');
@@ -54,6 +54,7 @@ class VoterRepository with ChangeNotifier{
   }
 
   //Nhập thông tin đặt lại mật khẩu cho người dùng
+  //Lấy thời điểm các kỳ bầu cử dựa trên SDT người dùng
 
 
 }
