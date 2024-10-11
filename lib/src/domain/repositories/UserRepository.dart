@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
+import 'package:votesecure/src/data/models/ContactUsModel.dart';
 import 'package:votesecure/src/data/models/ElectionModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -94,7 +96,8 @@ class UserRepository with ChangeNotifier{
               DiaChi: thongTinPhanHoi['data']['diaChiLienLac'],
               GioiTinh: thongTinPhanHoi['data']['gioiTinh'],
               SDT: thongTinPhanHoi['data']['sdt'],
-              Email: thongTinPhanHoi['data']['email']
+              Email: thongTinPhanHoi['data']['email'],
+            ID_Object: thongTinPhanHoi['data']['iD_Object']
           );
         }else{
           throw Exception(
@@ -126,6 +129,51 @@ class UserRepository with ChangeNotifier{
     await pref.remove('UserEmail');
 
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const loginPages()));
+  }
+
+  //Gửi thông tin liên he
+  Future SendComments(BuildContext context, ContactUsModel sender) async{
+    try{
+      final accessToken = await _tokenRepository.getAccessToken();
+      String uri = voterSendContactUs;
+      print('path: $uri');
+
+      var res = await http.post(
+        Uri.parse(uri),
+        headers: {
+          'content-type': 'application/json',
+          'Accept': 'application/json',
+          "Authorization": "Bearer $accessToken",
+        },
+          body: jsonEncode({
+            "IDSender": sender.IDSender,
+            "YKien": sender.YKien
+          })
+      );
+
+      print('${res.body}');
+      if(res.statusCode == 200){
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.success,
+            title: "Gửi ý kiến thành công",
+            text: "Chúng tôi đã tiếp nhận ý kiến của bạn. Chúc bạn một ngày vui vẻ"
+        );
+      }else{
+        throw Exception(
+            'Failed to send comments. Status code: ${res.statusCode}');
+      }
+    }catch (e) {
+      if (e is SocketException) {
+        throw Exception('No internet connection: ${e.message}');
+      } else if (e is HttpException) {
+        throw Exception('HTTP error: ${e.message}');
+      } else if (e is FormatException) {
+        throw Exception('Bad response format: ${e.message}');
+      } else {
+        throw Exception('Error occurred while fetching data: $e');
+      }
+    }
   }
 
 }

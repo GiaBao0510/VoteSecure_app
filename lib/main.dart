@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:votesecure/src/config/AppConfig.dart';
 import 'package:votesecure/src/core/network/CheckNetwork.dart';
 import 'package:votesecure/src/data/models/ProfileModel.dart';
+import 'package:votesecure/src/domain/repositories/CandidateRepository.dart';
 import 'package:votesecure/src/domain/repositories/EnterEmailToVerify_repository.dart';
 import 'package:votesecure/src/domain/repositories/VoterRepository.dart';
 import 'package:votesecure/src/domain/repositories/Token_Repositories.dart';
@@ -39,6 +40,7 @@ Future<void> main() async{
       ChangeNotifierProvider(create: (_) => TokenRepository()),
       ChangeNotifierProvider(create: (_) => VoterRepository()),
       ChangeNotifierProvider(create: (_) => UserRepository()),
+      ChangeNotifierProvider(create: (_) => CandidateRepository()),
     ],
       child:  MyApp()
     )
@@ -64,7 +66,12 @@ class MyApp extends StatelessWidget {
       switch(Logined){
         case -1: return loginPages();
         case 2: return Homecadidate();
-        case 5: return homeVoter(user: ProfileModel(SDT: 'null',HoTen: 'null',GioiTinh: 'null',Email:'null', DiaChi: 'null',HinhAnh: 'null',NgaySinh: DateTime.now(),TenDanToc: 'null') ,);
+        case 5: return homeVoter(user:
+          ProfileModel
+            (SDT: 'null',HoTen: 'null',GioiTinh: 'null',
+            Email:'null', DiaChi: 'null',HinhAnh: 'null',
+            NgaySinh: DateTime.now(),TenDanToc: 'null', ID_Object: 'null')
+          ,);
         case 8: return HomeCadre();
         default: return loginPages();
       }

@@ -6,7 +6,8 @@ class ProfileModel{
     Email,
     SDT,
     HinhAnh,
-    TenDanToc;
+    TenDanToc,
+    ID_Object;
   final DateTime? NgaySinh;
 
   //Ham nhập
@@ -18,7 +19,8 @@ class ProfileModel{
     required this.SDT,
     required this.HinhAnh,
     required this.TenDanToc,
-    required this.NgaySinh
+    required this.NgaySinh,
+    required this.ID_Object
   });
 
   ProfileModel copywith({
@@ -29,6 +31,7 @@ class ProfileModel{
     String? SDT,
     String? HinhAnh,
     String? TenDanToc,
+    String? ID_Object,
     DateTime? NgaySinh
   }){
     return ProfileModel(
@@ -39,7 +42,8 @@ class ProfileModel{
       TenDanToc: TenDanToc ?? this.TenDanToc,
       HoTen: HoTen ?? this.HoTen,
       NgaySinh: NgaySinh ?? this.NgaySinh,
-      SDT: SDT ?? this.SDT
+      SDT: SDT ?? this.SDT,
+      ID_Object: ID_Object ?? this.ID_Object
     );
   }
 
@@ -53,19 +57,21 @@ class ProfileModel{
       'HinhAnh':HinhAnh,
       'TenDanToc':TenDanToc,
       'NgaySinh':NgaySinh,
+      'ID_Object':ID_Object
     };
   }
 
   factory ProfileModel.fromMap(Map<String, dynamic> map){
     return ProfileModel(
-        HoTen: map['HoTen'],
-        GioiTinh: map['GioiTinh'],
-        DiaChi: map['DiaChi'],
-        Email: map['Email'],
-        SDT: map['SDT'],
-        HinhAnh: map['HinhAnh'],
-        TenDanToc: map['TenDanToc'],
+        HoTen: map['HoTen'] ?? 'nuul',
+        GioiTinh: map['GioiTinh'] ?? 'nuul',
+        DiaChi: map['DiaChi'] ?? 'nuul',
+        Email: map['Email'] ?? 'nuul',
+        SDT: map['SDT'] ?? 'nuul',
+        HinhAnh: map['HinhAnh'] ?? 'nuul',
+        TenDanToc: map['TenDanToc'] ?? 'nuul',
         NgaySinh: map['NgaySinh'],
+        ID_Object: map['ID_Object'] ?? 'nuul'
     );
   }
 }

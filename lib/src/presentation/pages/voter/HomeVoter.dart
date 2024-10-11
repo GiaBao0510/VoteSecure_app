@@ -5,6 +5,7 @@ import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/domain/repositories/UserRepository.dart';
 import 'package:votesecure/src/presentation/pages/common/ElectionCalender/ElectionCalender.dart';
+import 'package:votesecure/src/presentation/pages/voter/ListElections.dart';
 import 'package:votesecure/src/presentation/widgets/TitleAppBarForHomePage.dart';
 import 'package:votesecure/src/presentation/pages/common/account/Account.dart';
 
@@ -153,7 +154,7 @@ class HomeScreen extends StatelessWidget {
                             child: widgetlibraryState.buildMenuItem(context,'Lịch bầu cử', Icons.calendar_month_outlined, ElectioncalenderScreen.routeName)
                         ),
                         Expanded(
-                            child: widgetlibraryState.buildMenuItem(context,'Danh sách \nkỳ bầu cử', Icons.list_alt, ElectioncalenderScreen.routeName),
+                            child: widgetlibraryState.buildMenuItem(context,'Danh sách \nkỳ bầu cử', Icons.list_alt, ListElectionsScreen.routeName),
                         ),
                         Expanded(
                             child: widgetlibraryState.buildMenuItem(context,'Gửi thông tin \nliên hệ', Icons.send_rounded, ElectioncalenderScreen.routeName),

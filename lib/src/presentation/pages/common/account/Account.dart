@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/domain/repositories/UserRepository.dart';
+import 'package:votesecure/src/presentation/pages/common/Policy/Policy_private.dart';
+import 'package:votesecure/src/presentation/pages/common/SupportInformationSubmission/SupportInformationSubmission_page.dart';
 
 class UserAccount extends StatelessWidget {
   static const routeName = 'user-account';
@@ -100,12 +102,22 @@ class UserAccount extends StatelessWidget {
                 _buildProfileOption(
                   icon: Icons.policy_outlined,
                   title: 'Chính sách',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => PrivacyPolicyPage())
+                    );
+                  },
                 ),
                 _buildProfileOption(
                   icon: Icons.send_sharp,
                   title: 'Gửi liên hệ hỗ trợ',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FeedbackPage(IDSender: user.ID_Object ?? '' ,))
+                    );
+                  },
                 ),
                 _buildProfileOption(
                   icon: Icons.info,

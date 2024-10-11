@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart';
+import 'package:intl/intl.dart';
 import 'package:votesecure/src/presentation/pages/shared/LoadingPage.dart';
 
 
@@ -170,6 +171,11 @@ class WidgetlibraryState extends State<Widgetlibrary> {
         ],
       ),
     );
+  }
+
+  String DateTimeFormat(String thoidiem){
+    DateTime dateTime = DateTime.parse(thoidiem);
+    return DateFormat('dd/MM/yyyy HH:mm:ss').format(dateTime);
   }
 
 }

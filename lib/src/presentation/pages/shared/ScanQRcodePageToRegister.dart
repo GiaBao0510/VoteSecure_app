@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:votesecure/src/presentation/pages/voter/UserInformationAfterScanningTheCode_page.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:votesecure/src/domain/repositories/Register_repository.dart';
+import 'package:votesecure/src/domain/repositories/VoterRepository.dart';
 import 'package:votesecure/src/data/models/VoterInformationAfterScaningModel.dart';
 
 class QRScannerPage extends StatefulWidget {

@@ -49,7 +49,6 @@ class WorkWithOtpRepository with ChangeNotifier{
 
       final thongTinPhanHoi = jsonDecode(res.body);
       print(res.body);
-      String message = thongTinPhanHoi['message'];
 
       //Nếu xác thực thành công thì lưu accessToken và refresh token vào thiết bị
       if (res.statusCode == 200) {
@@ -103,7 +102,7 @@ class WorkWithOtpRepository with ChangeNotifier{
   //Kiểm tra vai trò người dùng rồi chuyển sang page dựa trên vai trò
   Future<void> _navigateToPage(BuildContext context, Map<String, dynamic> responseData) async {
     final accessToken = await _tokenRepository.getAccessToken();
-    ProfileModel user = ProfileModel(SDT: 'null',HoTen: 'null',GioiTinh: 'null',Email:'null', DiaChi: 'null',HinhAnh: 'null',NgaySinh: DateTime.now(),TenDanToc: 'null');
+    ProfileModel user = ProfileModel(SDT: 'null',HoTen: 'null',GioiTinh: 'null',Email:'null', DiaChi: 'null',HinhAnh: 'null',NgaySinh: DateTime.now(),TenDanToc: 'null',ID_Object: 'null');
     if (accessToken != null) {
       final decodedToken = JwtDecoder.decode(accessToken);
 
@@ -134,25 +133,16 @@ class WorkWithOtpRepository with ChangeNotifier{
         print("Lấy thông tin người dùng thành công");
 
         user = ProfileModel(
-            HoTen: thongTinPhanHoi['data']['hoTen'],
-            TenDanToc: thongTinPhanHoi['data']['tenDanToc'],
-            NgaySinh: DateTime.parse(thongTinPhanHoi['data']['ngaySinh']),
-            HinhAnh: thongTinPhanHoi['data']['hinhAnh'],
-            DiaChi: thongTinPhanHoi['data']['diaChiLienLac'],
-            GioiTinh: thongTinPhanHoi['data']['gioiTinh'],
-            SDT: thongTinPhanHoi['data']['sdt'],
-            Email: thongTinPhanHoi['data']['email']
+          HoTen: thongTinPhanHoi['data']['hoTen'],
+          TenDanToc: thongTinPhanHoi['data']['tenDanToc'],
+          NgaySinh: DateTime.parse(thongTinPhanHoi['data']['ngaySinh']),
+          HinhAnh: thongTinPhanHoi['data']['hinhAnh'],
+          DiaChi: thongTinPhanHoi['data']['diaChiLienLac'],
+          GioiTinh: thongTinPhanHoi['data']['gioiTinh'],
+          SDT: thongTinPhanHoi['data']['sdt'],
+          Email: thongTinPhanHoi['data']['email'],
+          ID_Object: thongTinPhanHoi['data']['iD_Object']
         );
-
-        // print("----- Thông tin người dùng ----------");
-        // print('hoTen: ${user.HoTen}');
-        // print('TenDanToc: ${user.TenDanToc}');
-        // print('NgaySinh: ${user.NgaySinh}');
-        // print('HinhAnh: ${user.HinhAnh}');
-        // print('GioiTinh: ${user.GioiTinh}');
-        // print('SDT: ${user.SDT}');
-        // print('Email: ${user.Email}');
-        // print('----------------------------------------');
 
         switch (role) {
           case "2":
