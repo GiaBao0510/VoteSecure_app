@@ -6,8 +6,11 @@ class CandidateListBasedonElEctionDateModel{
   HinhAnh,
   TenDanToc,
   TrangThai,
-  NgaySinh;
-  int soLuotBinhChon, tyLeBinhChon;
+  NgaySinh,
+  GioiThieu,
+  tenTrinhDoHocVan;
+  final int soLuotBinhChon, tyLeBinhChon;
+  bool IsSelected;
 
   //Ham nhập
   CandidateListBasedonElEctionDateModel({
@@ -20,6 +23,9 @@ class CandidateListBasedonElEctionDateModel{
     required this.NgaySinh,
     required this.soLuotBinhChon,
     required this.tyLeBinhChon,
+    required this.IsSelected,
+    required this.tenTrinhDoHocVan,
+    required this.GioiThieu
   });
 
   CandidateListBasedonElEctionDateModel copywith({
@@ -30,8 +36,11 @@ class CandidateListBasedonElEctionDateModel{
     int? soLuotBinhChon,
     String? HinhAnh,
     String? TenDanToc,
+    String? GioiThieu,
     int? tyLeBinhChon,
-    String? NgaySinh
+    String? NgaySinh,
+    String? tenTrinhDoHocVan,
+    bool? IsSelected
   }){
     return CandidateListBasedonElEctionDateModel(
         TrangThai: TrangThai ?? this.TrangThai,
@@ -42,7 +51,10 @@ class CandidateListBasedonElEctionDateModel{
         HoTen: HoTen ?? this.HoTen,
         NgaySinh: NgaySinh ?? this.NgaySinh,
         tyLeBinhChon: tyLeBinhChon ?? this.tyLeBinhChon,
-        soLuotBinhChon: soLuotBinhChon ?? this.soLuotBinhChon
+        soLuotBinhChon: soLuotBinhChon ?? this.soLuotBinhChon,
+        IsSelected: IsSelected ?? this.IsSelected,
+        tenTrinhDoHocVan: tenTrinhDoHocVan ?? this.tenTrinhDoHocVan,
+        GioiThieu: GioiThieu ?? this.GioiThieu
     );
   }
 
@@ -56,7 +68,10 @@ class CandidateListBasedonElEctionDateModel{
       'HinhAnh':HinhAnh,
       'TenDanToc':TenDanToc,
       'NgaySinh':NgaySinh,
-      'soLuotBinhChon':soLuotBinhChon
+      'soLuotBinhChon':soLuotBinhChon,
+      'IsSelected':IsSelected,
+      'tenTrinhDoHocVan':tenTrinhDoHocVan,
+      'GioiThieu':GioiThieu,
     };
   }
 
@@ -67,10 +82,13 @@ class CandidateListBasedonElEctionDateModel{
         TrangThai: map['trangThai'] ?? 'null',
         Email: map['email'] ?? 'null',
         soLuotBinhChon: map['soLuotBinhChon'] ?? 'null',
-        HinhAnh: map['HinhAnh'] ?? 'null',
+        HinhAnh: map['hinhAnh'] ?? 'null',
         TenDanToc: map['tenDanToc'] ?? 'null',
         NgaySinh: map['ngaySinh'],
-        tyLeBinhChon: map['tyLeBinhChon'] ?? 'null'
+        tyLeBinhChon: map['tyLeBinhChon'] ?? 'null',
+        IsSelected: false,
+        tenTrinhDoHocVan: map['tenTrinhDoHocVan'] ?? 'null',
+        GioiThieu: map['gioiThieu'] ?? 'null',
     );
   }
 }

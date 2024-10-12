@@ -7,6 +7,7 @@ import 'package:votesecure/src/domain/repositories/VoterRepository.dart';
 import 'package:votesecure/src/presentation/pages/shared/LoadingPage.dart';
 import 'package:votesecure/src/presentation/widgets/TitleAppBar.dart';
 import 'package:votesecure/src/presentation/widgets/searchBar.dart';
+import 'package:votesecure/src/presentation/pages/voter/BallotForm.dart';
 
 class ListElectionsScreen extends StatefulWidget {
   static const routeName = 'list-election-for-voter-screen';
@@ -136,6 +137,10 @@ class _ListElectionsScreenState extends State<ListElectionsScreen> {
                 child: ElevatedButton(
                   onPressed: (){
                     print('Đi đến form bỏ phiếu');
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => BallotForm(ngayBD: _fillDanhSachBauCuList[index].ngayBD, electionDetails: _fillDanhSachBauCuList[index],))
+                    );
                   },
                   style: ButtonStyle(
                     backgroundColor:

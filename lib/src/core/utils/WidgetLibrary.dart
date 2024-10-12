@@ -178,4 +178,9 @@ class WidgetlibraryState extends State<Widgetlibrary> {
     return DateFormat('dd/MM/yyyy HH:mm:ss').format(dateTime);
   }
 
+  String DateFormat2(String thoidiem){
+    DateTime dateTime = DateTime.parse(thoidiem);
+    return DateFormat('dd/MM/yyyy').format(dateTime);
+  }
+
 }

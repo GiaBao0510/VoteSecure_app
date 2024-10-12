@@ -4,8 +4,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:votesecure/src/config/AppConfig_api.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/CandidateListBasedOnElctionDateModel.dart';
@@ -36,12 +34,11 @@ class CandidateRepository with ChangeNotifier{
       // Đóng dialog sau khi có phản hồi từ server
       Navigator.of(context).pop();
 
-      print(res.body);
       if(res.statusCode == 200){
         Map<String,dynamic> json = jsonDecode(res.body);
         List<dynamic> data = json['data'];
         List<CandidateListBasedonElEctionDateModel> electionVoterHavePaticipanted
-        = data.map((e) => CandidateListBasedonElEctionDateModel.fromMap(e)).toList();
+         = data.map((e) => CandidateListBasedonElEctionDateModel.fromMap(e)).toList();
 
         notifyListeners();
         return electionVoterHavePaticipanted;

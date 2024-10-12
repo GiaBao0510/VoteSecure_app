@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:votesecure/src/data/models/ElectionsVotersHavePaticipated_Model.dart';
 import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/data/models/VerifyOtpModel.dart';
 import 'package:votesecure/src/data/models/VoterInformationAfterScaningModel.dart';
@@ -11,6 +12,7 @@ import 'package:votesecure/src/presentation/pages/shared/ScanQRcodePageToRegiste
 import 'package:votesecure/src/presentation/pages/shared/SetPwdBasedOnEmail.dart';
 import 'package:votesecure/src/presentation/pages/shared/login.dart';
 import 'package:votesecure/src/presentation/pages/shared/ErorrServer.dart';
+import 'package:votesecure/src/presentation/pages/voter/BallotForm.dart';
 import 'package:votesecure/src/presentation/pages/voter/HomeVoter.dart';
 import 'package:votesecure/src/presentation/pages/cadre/HomCadre.dart';
 import 'package:votesecure/src/presentation/pages/candidate/HomeCadidate.dart';
@@ -39,4 +41,6 @@ final Map<String, WidgetBuilder> routes = {
   ListElectionsScreen.routeName:(ctx) => ListElectionsScreen(),
   PrivacyPolicyPage.routeName:(ctx) => ListElectionsScreen(),
   FeedbackPage.routeName:(ctx) => FeedbackPage(IDSender: '',),
+  BallotForm.routeName:(ctx) => BallotForm(ngayBD: '',
+    electionDetails: new ElectionVoterHavePaticipanted_Model(ngayBD: '', ngayKT: '', tenKyBauCu: '', mota: '', ghiNhan: '', tenDonViBauCu: '', soLuongToiDaCuTri: 0, soLuongToiDaUngCuVien: 0, soLuotBinhChonToiDa: 0),),
 };
