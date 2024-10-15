@@ -9,7 +9,6 @@ class PasswordSetupPage extends StatefulWidget {
 class _PasswordSetupPageState extends State<PasswordSetupPage> {
   WidgetlibraryState widgetLibraryState = WidgetlibraryState();
   final _formKey = GlobalKey<FormState>();
-  String _idNumber = '';
   String _password = '';
   String _confirmPassword = '';
 
@@ -61,17 +60,6 @@ class _PasswordSetupPageState extends State<PasswordSetupPage> {
                 ),
               ),
               const SizedBox(height: 30),
-              _buildTextFormField(
-                'Số căn cước',
-                    (value) {
-                  if (value!.isEmpty) {
-                    return 'Vui lòng nhập số căn cước';
-                  }
-                  return null;
-                },
-                    (value) => _idNumber = value!,
-              ),
-              const SizedBox(height: 20),
               _buildTextFormField(
                 'Mật khẩu',
                     (value) {

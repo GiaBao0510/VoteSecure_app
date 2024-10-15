@@ -102,7 +102,9 @@ class WorkWithOtpRepository with ChangeNotifier{
   //Kiểm tra vai trò người dùng rồi chuyển sang page dựa trên vai trò
   Future<void> _navigateToPage(BuildContext context, Map<String, dynamic> responseData) async {
     final accessToken = await _tokenRepository.getAccessToken();
-    ProfileModel user = ProfileModel(SDT: 'null',HoTen: 'null',GioiTinh: 'null',Email:'null', DiaChi: 'null',HinhAnh: 'null',NgaySinh: DateTime.now(),TenDanToc: 'null',ID_Object: 'null');
+    ProfileModel user = ProfileModel(SDT: 'null',HoTen: 'null',GioiTinh: 'null',
+        Email:'null', DiaChi: 'null',HinhAnh: 'null',NgaySinh: DateTime.now(),
+        TenDanToc: 'null',ID_Object: 'null',ID_User: 'null');
     if (accessToken != null) {
       final decodedToken = JwtDecoder.decode(accessToken);
 
@@ -141,7 +143,8 @@ class WorkWithOtpRepository with ChangeNotifier{
           GioiTinh: thongTinPhanHoi['data']['gioiTinh'],
           SDT: thongTinPhanHoi['data']['sdt'],
           Email: thongTinPhanHoi['data']['email'],
-          ID_Object: thongTinPhanHoi['data']['iD_Object']
+          ID_Object: thongTinPhanHoi['data']['iD_Object'],
+          ID_User: thongTinPhanHoi['data']['iD_user']
         );
 
         switch (role) {

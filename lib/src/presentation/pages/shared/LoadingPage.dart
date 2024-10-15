@@ -33,18 +33,19 @@ class _LoadingPageState extends State<LoadingPage> {
     );
   }
 
-  Widget BuildServerErrorFrame(BuildContext context){
+  Widget BuildServerErrorFrame(BuildContext context) {
     return Align(
-        alignment: Alignment.center,
-        child: Column(children: [
-          const SizedBox(height: 230,),
-          //Hoạt hình
+      alignment: Alignment.center,
+      child: ListView(
+        children: [
+          SizedBox(height: 230),
           FractionallySizedBox(
             widthFactor: 1,
-            child: widgetLibraryState.buildAnimation(context, 'assets/animations/loading4.json')
+            child: widgetLibraryState.buildAnimation(
+                context, 'assets/animations/loading4.json'),
           ),
-
-        ],)
+        ],
+      ),
     );
   }
 }

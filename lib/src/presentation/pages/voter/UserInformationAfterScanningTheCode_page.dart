@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:votesecure/src/data/models/VoterInformationAfterScaningModel.dart';
+import 'package:votesecure/src/presentation/pages/shared/RegisterPage.dart';
 
 class UserProfilePage extends StatelessWidget {
   static const routeName = 'voter-information-after-scanning-theCode';
@@ -61,6 +62,10 @@ class UserProfilePage extends StatelessWidget {
               child: FloatingActionButton.extended(
                 onPressed: () {
                   // Xử lý khi nút được nhấn
+                  Navigator.push(
+                      context, 
+                      MaterialPageRoute(builder: (context) => RegisterAndSetPwdScreen(SDT:voter.sdt ?? 'null'))
+                  );
                 },
                 label: Text('Đi đến đặt mật khẩu'),
                 icon: Icon(Icons.lock),

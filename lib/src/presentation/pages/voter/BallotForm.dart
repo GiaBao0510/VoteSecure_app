@@ -6,6 +6,7 @@ import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/CandidateListBasedOnElctionDateModel.dart';
 import 'package:votesecure/src/data/models/ElectionsVotersHavePaticipated_Model.dart';
 import 'package:votesecure/src/domain/repositories/CandidateRepository.dart';
+import 'package:votesecure/src/domain/repositories/VoterRepository.dart';
 import 'package:votesecure/src/presentation/pages/shared/LoadingPage.dart';
 import 'package:votesecure/src/presentation/widgets/TitleAppBar.dart';
 import 'package:votesecure/src/presentation/widgets/searchBar.dart';
@@ -14,24 +15,28 @@ import 'package:votesecure/src/presentation/pages/common/Introduction/CandidateI
 class BallotForm extends StatefulWidget {
   static const routeName = 'ballot-form';
   final String ngayBD;
+  final String ID_object;
   final ElectionVoterHavePaticipanted_Model electionDetails;
 
   const BallotForm({
     super.key,
     required this.ngayBD,
-    required this.electionDetails
+    required this.electionDetails,
+    required this.ID_object
   });
 
   @override
-  _BallotFormState createState() => _BallotFormState(ngayBD: ngayBD,electionDetails: electionDetails);
+  _BallotFormState createState() => _BallotFormState(ngayBD: ngayBD,electionDetails: electionDetails,ID_object: ID_object);
 }
 
 class _BallotFormState extends State<BallotForm> {
   //Thuộc tính
   final String ngayBD;
+  final String ID_object;
   final ElectionVoterHavePaticipanted_Model electionDetails;
   WidgetlibraryState widgetLibraryState = WidgetlibraryState();
   final CandidateRepository  candidateRepository = CandidateRepository();
+  final VoterRepository  voterRepository = VoterRepository();
   final TextEditingController _searchController = TextEditingController();
   late Future<List<CandidateListBasedonElEctionDateModel>> _danhsachungcuvienFuture;
   List<CandidateListBasedonElEctionDateModel> _fillDanhSachUngCuVienList = [];
@@ -41,6 +46,7 @@ class _BallotFormState extends State<BallotForm> {
   _BallotFormState({
     required this.ngayBD,
     required this.electionDetails,
+    required this.ID_object
   });
 
   //Khởi tạo
@@ -343,7 +349,7 @@ class _BallotFormState extends State<BallotForm> {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   //Hiêển thị thông tin trước khi tính giá trị phiếu bầu
                   print('--------- Thông tin truốc khi tính giá trị phiếu bầu --------');
                   print('Số lượt binh chọn tối đa: ${electionDetails.soLuotBinhChonToiDa}');
@@ -358,10 +364,15 @@ class _BallotFormState extends State<BallotForm> {
                     GiaTriPhieu += BigInt.from(ThongTinPhieuBau[i]) * BigInt.from(math.pow(b, i));
                   }
                   print('Giá trị phiếu: ${GiaTriPhieu}');
+                  print('ID_cutri: ${ID_object}');
+                  print('iD_cap: ${electionDetails.iD_Cap}');
+                  print('iD_DonViBauCu: ${electionDetails.iD_Cap}');
+                  print('ngayBD: ${electionDetails.ngayBD}');
                   print('-----------------------------------------');
 
                   // Kiểm tra xem có ít nhất một task được chọn không
                   if (_fillDanhSachUngCuVienList.any((task) => task.IsSelected)) {
+                    await voterRepository.VoterVote(context, electionDetails, ID_object, GiaTriPhieu);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Gửi phiếu bầu thành công!'),

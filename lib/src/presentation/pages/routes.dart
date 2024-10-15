@@ -6,8 +6,10 @@ import 'package:votesecure/src/data/models/VerifyOtpModel.dart';
 import 'package:votesecure/src/data/models/VoterInformationAfterScaningModel.dart';
 import 'package:votesecure/src/presentation/pages/common/Policy/Policy_private.dart';
 import 'package:votesecure/src/presentation/pages/common/SupportInformationSubmission/SupportInformationSubmission_page.dart';
+import 'package:votesecure/src/presentation/pages/common/profile/Profile.dart';
 import 'package:votesecure/src/presentation/pages/shared/LoadingPage.dart';
 import 'package:votesecure/src/presentation/pages/shared/NoNetwork.dart';
+import 'package:votesecure/src/presentation/pages/shared/RegisterPage.dart';
 import 'package:votesecure/src/presentation/pages/shared/ScanQRcodePageToRegister.dart';
 import 'package:votesecure/src/presentation/pages/shared/SetPwdBasedOnEmail.dart';
 import 'package:votesecure/src/presentation/pages/shared/login.dart';
@@ -26,21 +28,23 @@ import 'package:votesecure/src/presentation/pages/voter/ListElections.dart';
 final Map<String, WidgetBuilder> routes = {
   Nonetwork.routerName: (ctx) => Nonetwork(),
   loginPages.routeName: (ctx) => loginPages(),
-  UserAccount.routeName: (ctx) => UserAccount(user: new ProfileModel(HoTen: '', GioiTinh: '', DiaChi: '', Email: '', SDT: '', HinhAnh: '', TenDanToc: '', NgaySinh: DateTime.now(), ID_Object: 'null'),),
+  UserAccount.routeName: (ctx) => UserAccount(user: new ProfileModel(HoTen: '', GioiTinh: '', DiaChi: '', Email: '', SDT: '', HinhAnh: '', TenDanToc: '', NgaySinh: DateTime.now(), ID_Object: 'null', ID_User: 'null'),),
   ServerErrorPage.routeName:(ctx) => ServerErrorPage(ErrorRecordedInText: "",),
   LoadingPage.routeName:(ctx) => LoadingPage(),
-  homeVoter.routeName:(ctx) => homeVoter(user: new ProfileModel(HoTen: '', GioiTinh: '', DiaChi: '', Email: '', SDT: '', HinhAnh: '', TenDanToc: '', NgaySinh: DateTime.now(), ID_Object: 'null'),),
+  homeVoter.routeName:(ctx) => homeVoter(user: new ProfileModel(HoTen: '', GioiTinh: '', DiaChi: '', Email: '', SDT: '', HinhAnh: '', TenDanToc: '', NgaySinh: DateTime.now(), ID_Object: 'null', ID_User: 'null'),),
   Homecadidate.routeName:(ctx) => Homecadidate(),
   HomeCadre.routeName:(ctx) => HomeCadre(),
   VerificationCodeScreen.routeName:(ctx) => VerificationCodeScreen(verifyOtp: new verifyOtpModel('','',''), Email: '',),
   VerificationCode_ForgotPwdScreen.routeName:(ctx) => VerificationCode_ForgotPwdScreen(verifyOtp: new verifyOtpModel('','',''),Email: '',),
   ChangePasswordScreen.routeName:(ctx) => ChangePasswordScreen(Email: '',),
   QRScannerPage.routeName:(ctx) => QRScannerPage(),
-  UserProfilePage.routeName:(ctx) => UserProfilePage(voter: new Voterinformationafterscaningmodel('','','',DateTime.now(),'','','','') ,),
+  UserProfilePage.routeName:(ctx) => UserProfilePage(voter: new Voterinformationafterscaningmodel('','','','','','','','') ,),
   ElectioncalenderScreen.routeName:(ctx) => ElectioncalenderScreen(),
-  ListElectionsScreen.routeName:(ctx) => ListElectionsScreen(),
-  PrivacyPolicyPage.routeName:(ctx) => ListElectionsScreen(),
+  ListElectionsScreen.routeName:(ctx) => ListElectionsScreen(ID_object: '',),
+  PrivacyPolicyPage.routeName:(ctx) => ListElectionsScreen(ID_object: '',),
   FeedbackPage.routeName:(ctx) => FeedbackPage(IDSender: '',),
-  BallotForm.routeName:(ctx) => BallotForm(ngayBD: '',
-    electionDetails: new ElectionVoterHavePaticipanted_Model(ngayBD: '', ngayKT: '', tenKyBauCu: '', mota: '', ghiNhan: '', tenDonViBauCu: '', soLuongToiDaCuTri: 0, soLuongToiDaUngCuVien: 0, soLuotBinhChonToiDa: 0),),
+  BallotForm.routeName:(ctx) => BallotForm(ngayBD: '',ID_object: '' ,
+    electionDetails: new ElectionVoterHavePaticipanted_Model(ngayBD: '', ngayKT: '', tenKyBauCu: '', mota: '', ghiNhan: '', tenDonViBauCu: '', soLuongToiDaCuTri: 0, soLuongToiDaUngCuVien: 0, soLuotBinhChonToiDa: 0,iD_Cap:0,iD_DonViBauCu:0),),
+  EditProfilePage.routeName:(ctx) => EditProfilePage(user:new ProfileModel(HoTen: '', GioiTinh: '', DiaChi: '', Email: '', SDT: '', HinhAnh: '', TenDanToc: '', NgaySinh: DateTime.now(), ID_Object: 'null', ID_User: 'null') ,),
+  RegisterAndSetPwdScreen.routeName:(ctx) => RegisterAndSetPwdScreen(SDT: '',),
 };

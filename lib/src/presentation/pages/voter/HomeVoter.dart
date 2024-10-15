@@ -35,11 +35,22 @@ class _homeVoterState extends State<homeVoter> {
   void initState() {
     super.initState();
     _pages = [
-      HomeScreen(),
+      HomeScreen(ID_object: user.ID_Object ?? '',),
       ActivityScreen(),
       UserAccount(user: user),
     ];
     Email = user.Email ?? 'null';
+
+    print(" --- Khơởi tao tai home: ===");
+    print('Ho ten: ${user.HoTen}');
+    print('Email: ${user.Email}');
+    print('SDT: ${user.SDT}');
+    print('GioiTinh: ${user.GioiTinh}');
+    print('DiaChi: ${user.DiaChi}');
+    print('ID_DanToc: ${user}');
+    print('NgaySinh: ${user.NgaySinh}');
+    print('ID_User: ${user.ID_User}');
+    print("----------------------");
   }
 
   @override
@@ -91,7 +102,10 @@ class _homeVoterState extends State<homeVoter> {
 }
 
 class HomeScreen extends StatelessWidget {
+  final String ID_object;
   WidgetlibraryState widgetlibraryState = WidgetlibraryState();
+
+  HomeScreen({required this.ID_object});
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +168,41 @@ class HomeScreen extends StatelessWidget {
                             child: widgetlibraryState.buildMenuItem(context,'Lịch bầu cử', Icons.calendar_month_outlined, ElectioncalenderScreen.routeName)
                         ),
                         Expanded(
-                            child: widgetlibraryState.buildMenuItem(context,'Danh sách \nkỳ bầu cử', Icons.list_alt, ListElectionsScreen.routeName),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ListElectionsScreen(ID_object: ID_object))
+                                );
+                              },
+                              child: Column(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  Container(
+                                      decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [Color(0xff44a4fd), Color(0xff3f5efb)],
+                                            stops: [0.25, 0.75],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                          ),
+                                          borderRadius: BorderRadius.circular(10)
+                                      ),
+                                      height: 50,
+                                      width: 50,
+                                      child: Icon(Icons.list_alt, size: 40,color: Colors.white,)
+                                  ),
+                                  SizedBox(height: 8),
+                                  FittedBox(
+                                      fit: BoxFit.fitWidth,
+                                      child: Text(
+                                        'Danh sách \nkỳ bầu cử', style: TextStyle(fontSize: 15),
+                                        textAlign: TextAlign.center,
+                                      )
+                                  ),
+                                ],
+                              ),
+                            ),
                         ),
                         Expanded(
                             child: widgetlibraryState.buildMenuItem(context,'Gửi thông tin \nliên hệ', Icons.send_rounded, ElectioncalenderScreen.routeName),
@@ -190,11 +238,3 @@ class ActivityScreen extends StatelessWidget {
   }
 }
 
-class AccountScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Account Page'),
-    );
-  }
-}

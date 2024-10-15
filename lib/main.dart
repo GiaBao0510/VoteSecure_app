@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
           ProfileModel
             (SDT: 'null',HoTen: 'null',GioiTinh: 'null',
             Email:'null', DiaChi: 'null',HinhAnh: 'null',
-            NgaySinh: DateTime.now(),TenDanToc: 'null', ID_Object: 'null')
+            NgaySinh: DateTime.now(),TenDanToc: 'null', ID_Object: 'null', ID_User: 'null')
           ,);
         case 8: return HomeCadre();
         default: return loginPages();

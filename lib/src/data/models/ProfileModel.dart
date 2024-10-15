@@ -7,7 +7,8 @@ class ProfileModel{
     SDT,
     HinhAnh,
     TenDanToc,
-    ID_Object;
+    ID_Object,
+    ID_User;
   final DateTime? NgaySinh;
 
   //Ham nhập
@@ -20,7 +21,8 @@ class ProfileModel{
     required this.HinhAnh,
     required this.TenDanToc,
     required this.NgaySinh,
-    required this.ID_Object
+    required this.ID_Object,
+    required this.ID_User
   });
 
   ProfileModel copywith({
@@ -31,6 +33,7 @@ class ProfileModel{
     String? SDT,
     String? HinhAnh,
     String? TenDanToc,
+    String? ID_User,
     String? ID_Object,
     DateTime? NgaySinh
   }){
@@ -43,7 +46,8 @@ class ProfileModel{
       HoTen: HoTen ?? this.HoTen,
       NgaySinh: NgaySinh ?? this.NgaySinh,
       SDT: SDT ?? this.SDT,
-      ID_Object: ID_Object ?? this.ID_Object
+      ID_Object: ID_Object ?? this.ID_Object,
+      ID_User : ID_User ?? this.ID_User
     );
   }
 
@@ -57,7 +61,8 @@ class ProfileModel{
       'HinhAnh':HinhAnh,
       'TenDanToc':TenDanToc,
       'NgaySinh':NgaySinh,
-      'ID_Object':ID_Object
+      'ID_Object':ID_Object,
+      'ID_User':ID_User
     };
   }
 
@@ -71,7 +76,8 @@ class ProfileModel{
         HinhAnh: map['HinhAnh'] ?? 'nuul',
         TenDanToc: map['TenDanToc'] ?? 'nuul',
         NgaySinh: map['NgaySinh'],
-        ID_Object: map['ID_Object'] ?? 'nuul'
+        ID_Object: map['ID_Object'] ?? 'nuul',
+        ID_User: map['iD_User'] ?? 'nuul'
     );
   }
 }

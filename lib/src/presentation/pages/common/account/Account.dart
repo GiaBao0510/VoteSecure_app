@@ -4,6 +4,7 @@ import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/domain/repositories/UserRepository.dart';
 import 'package:votesecure/src/presentation/pages/common/Policy/Policy_private.dart';
 import 'package:votesecure/src/presentation/pages/common/SupportInformationSubmission/SupportInformationSubmission_page.dart';
+import 'package:votesecure/src/presentation/pages/common/profile/Profile.dart';
 
 class UserAccount extends StatelessWidget {
   static const routeName = 'user-account';
@@ -70,7 +71,10 @@ class UserAccount extends StatelessWidget {
                            const SizedBox(height: 5),
                            TextButton(
                                onPressed: (){
-                                 print('chi tiết');
+                                 Navigator.push(
+                                   context,
+                                   MaterialPageRoute(builder: (context) => EditProfilePage(user: user,))
+                                 );
                                },
                                child: RichText(
                                  textAlign: TextAlign.center,

@@ -3,7 +3,7 @@ class Voterinformationafterscaningmodel {
   String? hoten;
   String? tenDanToc;
   String? gioiTinh;
-  DateTime ngaySinh;
+  String? ngaySinh;
   String? diaChiLienLac;
   String? sdt;
   String? hinhAnh;

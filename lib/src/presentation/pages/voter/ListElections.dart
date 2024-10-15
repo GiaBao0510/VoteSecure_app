@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/quickalert.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/ElectionsVotersHavePaticipated_Model.dart';
 import 'package:votesecure/src/domain/repositories/VoterRepository.dart';
@@ -11,20 +12,24 @@ import 'package:votesecure/src/presentation/pages/voter/BallotForm.dart';
 
 class ListElectionsScreen extends StatefulWidget {
   static const routeName = 'list-election-for-voter-screen';
-  const ListElectionsScreen({super.key});
+  final String ID_object;
+  const ListElectionsScreen({super.key, required this.ID_object});
 
   @override
-  State<ListElectionsScreen> createState() => _ListElectionsScreenState();
+  State<ListElectionsScreen> createState() => _ListElectionsScreenState(ID_object: ID_object);
 }
 
 class _ListElectionsScreenState extends State<ListElectionsScreen> {
   //Thuộc tính
+  final String ID_object;
   WidgetlibraryState widgetLibraryState = WidgetlibraryState();
   final VoterRepository  voterRepository = VoterRepository();
   final TextEditingController _searchController = TextEditingController();
   late Future<List<ElectionVoterHavePaticipanted_Model>> _danhsachbaucuFuture;
   List<ElectionVoterHavePaticipanted_Model> _fillDanhSachBauCuList = [];
   List<ElectionVoterHavePaticipanted_Model> _danhSachBauCuList = [];
+
+  _ListElectionsScreenState({required this.ID_object});
 
   //Màu cho từng mục
   Color TextColorInItem = Colors.white;
@@ -136,11 +141,21 @@ class _ListElectionsScreenState extends State<ListElectionsScreen> {
                 ),
                 child: ElevatedButton(
                   onPressed: (){
-                    print('Đi đến form bỏ phiếu');
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => BallotForm(ngayBD: _fillDanhSachBauCuList[index].ngayBD, electionDetails: _fillDanhSachBauCuList[index],))
-                    );
+
+                    if(_fillDanhSachBauCuList[index].ghiNhan == '0'){
+                      print('Đi đến form bỏ phiếu');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => BallotForm(ngayBD: _fillDanhSachBauCuList[index].ngayBD, electionDetails: _fillDanhSachBauCuList[index],ID_object: ID_object, ))
+                      );
+                    }else{
+                      QuickAlert.show(
+                          context: context,
+                          type: QuickAlertType.warning,
+                          title: "Đã bỏ phiếu",
+                          text: "Bạn đã bỏ phiếu ở kỳ này rồi"
+                      );
+                    }
                   },
                   style: ButtonStyle(
                     backgroundColor:

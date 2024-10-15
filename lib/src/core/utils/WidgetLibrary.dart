@@ -183,4 +183,19 @@ class WidgetlibraryState extends State<Widgetlibrary> {
     return DateFormat('dd/MM/yyyy').format(dateTime);
   }
 
+  Widget Notification(BuildContext context, String title) {
+    return SnackBar(
+      content: Text('$title'),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      behavior: SnackBarBehavior.floating,
+      margin: const EdgeInsets.only(bottom: 60.0, left: 16.0, right: 16.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16.0,
+        vertical: 12.0,
+      ),
+    );
+  }
+
 }
