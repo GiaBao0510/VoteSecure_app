@@ -4,6 +4,7 @@ import 'package:votesecure/src/data/models/ElectionsVotersHavePaticipated_Model.
 import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/data/models/VerifyOtpModel.dart';
 import 'package:votesecure/src/data/models/VoterInformationAfterScaningModel.dart';
+import 'package:votesecure/src/presentation/pages/candidate/ListOfRegisteredCandidate.dart';
 import 'package:votesecure/src/presentation/pages/common/Policy/Policy_private.dart';
 import 'package:votesecure/src/presentation/pages/common/SupportInformationSubmission/SupportInformationSubmission_page.dart';
 import 'package:votesecure/src/presentation/pages/common/profile/Profile.dart';
@@ -25,14 +26,22 @@ import 'package:votesecure/src/presentation/pages/common/ElectionCalender/Electi
 import 'package:votesecure/src/presentation/pages/common/account/Account.dart';
 import 'package:votesecure/src/presentation/pages/voter/ListElections.dart';
 
+final HoSoNguoiDung = new ProfileModel(
+    HoTen: '', GioiTinh: '', DiaChi: '', Email: '', SDT: '', HinhAnh: '',
+    TenDanToc: '', NgaySinh: DateTime.now(), ID_Object: 'null', ID_User: 'null');
+
+final CuTriDaDuocThamDuKyBauCu =  new ElectionVoterHavePaticipanted_Model(
+    ngayBD: '', ngayKT: '', tenKyBauCu: '', mota: '', ghiNhan: '', tenDonViBauCu: '',
+    soLuongToiDaCuTri: 0, soLuongToiDaUngCuVien: 0, soLuotBinhChonToiDa: 0,iD_Cap:0,iD_DonViBauCu:0);
+
 final Map<String, WidgetBuilder> routes = {
   Nonetwork.routerName: (ctx) => Nonetwork(),
   loginPages.routeName: (ctx) => loginPages(),
-  UserAccount.routeName: (ctx) => UserAccount(user: new ProfileModel(HoTen: '', GioiTinh: '', DiaChi: '', Email: '', SDT: '', HinhAnh: '', TenDanToc: '', NgaySinh: DateTime.now(), ID_Object: 'null', ID_User: 'null'),),
+  UserAccount.routeName: (ctx) => UserAccount(user: HoSoNguoiDung,),
   ServerErrorPage.routeName:(ctx) => ServerErrorPage(ErrorRecordedInText: "",),
   LoadingPage.routeName:(ctx) => LoadingPage(),
-  homeVoter.routeName:(ctx) => homeVoter(user: new ProfileModel(HoTen: '', GioiTinh: '', DiaChi: '', Email: '', SDT: '', HinhAnh: '', TenDanToc: '', NgaySinh: DateTime.now(), ID_Object: 'null', ID_User: 'null'),),
-  Homecadidate.routeName:(ctx) => Homecadidate(),
+  homeVoter.routeName:(ctx) => homeVoter(user: HoSoNguoiDung,),
+  Homecadidate.routeName:(ctx) => Homecadidate(user: HoSoNguoiDung,),
   HomeCadre.routeName:(ctx) => HomeCadre(),
   VerificationCodeScreen.routeName:(ctx) => VerificationCodeScreen(verifyOtp: new verifyOtpModel('','',''), Email: '',),
   VerificationCode_ForgotPwdScreen.routeName:(ctx) => VerificationCode_ForgotPwdScreen(verifyOtp: new verifyOtpModel('','',''),Email: '',),
@@ -44,7 +53,8 @@ final Map<String, WidgetBuilder> routes = {
   PrivacyPolicyPage.routeName:(ctx) => ListElectionsScreen(ID_object: '',),
   FeedbackPage.routeName:(ctx) => FeedbackPage(IDSender: '',),
   BallotForm.routeName:(ctx) => BallotForm(ngayBD: '',ID_object: '' ,
-    electionDetails: new ElectionVoterHavePaticipanted_Model(ngayBD: '', ngayKT: '', tenKyBauCu: '', mota: '', ghiNhan: '', tenDonViBauCu: '', soLuongToiDaCuTri: 0, soLuongToiDaUngCuVien: 0, soLuotBinhChonToiDa: 0,iD_Cap:0,iD_DonViBauCu:0),),
-  EditProfilePage.routeName:(ctx) => EditProfilePage(user:new ProfileModel(HoTen: '', GioiTinh: '', DiaChi: '', Email: '', SDT: '', HinhAnh: '', TenDanToc: '', NgaySinh: DateTime.now(), ID_Object: 'null', ID_User: 'null') ,),
+    electionDetails: CuTriDaDuocThamDuKyBauCu,),
+  EditProfilePage.routeName:(ctx) => EditProfilePage(user:HoSoNguoiDung ,),
   RegisterAndSetPwdScreen.routeName:(ctx) => RegisterAndSetPwdScreen(SDT: '',),
+  ListofRegisteredCandidateScreen.routeName:(ctx) => ListofRegisteredCandidateScreen(ID_ucv: '',),
 };

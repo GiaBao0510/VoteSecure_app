@@ -149,7 +149,7 @@ class WorkWithOtpRepository with ChangeNotifier{
 
         switch (role) {
           case "2":
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Homecadidate()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>  Homecadidate(user: user,)));
             break;
           case "5":
             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) =>  homeVoter(user: user,)));

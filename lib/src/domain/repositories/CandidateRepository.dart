@@ -8,12 +8,13 @@ import 'package:votesecure/src/config/AppConfig_api.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/CandidateListBasedOnElctionDateModel.dart';
 import 'package:votesecure/src/domain/repositories/Token_Repositories.dart';
+import 'package:votesecure/src/data/models/CandidateRegistedForElectionsModel.dart';
 
 class CandidateRepository with ChangeNotifier{
   final TokenRepository _tokenRepository = TokenRepository();
   final widgetlibraryState = WidgetlibraryState();
 
-  //Lấy danh sách ứng cu viên dựa trên thời điểm bắt đầu bỏ phiếu
+  //1.Lấy danh sách ứng cu viên dựa trên thời điểm bắt đầu bỏ phiếu
   Future<List<CandidateListBasedonElEctionDateModel>> GetCandidateListBasedOnElectionDate(BuildContext context, String ngayBD) async{
     try{
       final accessToken = await _tokenRepository.getAccessToken();
@@ -58,4 +59,51 @@ class CandidateRepository with ChangeNotifier{
       }
     }
   }
+
+  //2.Lấy danh sách các kỳ bầu cử mà ứng cu viên đã ghi danh
+  Future<List<CandidateRegistedForElectionsModel>> GetListOfRegisteredCandidate(BuildContext context, String ID_ucv) async{
+    try{
+      final accessToken = await _tokenRepository.getAccessToken();
+      String uri = getListOfRegisteredCandidate+ID_ucv;
+      print('Path: ${uri}');
+
+      // Hiển thị dialog chờ đợi
+      widgetlibraryState.buildingAwaitingFeedback_2(context);
+
+      var res = await http.get(
+          Uri.parse(uri),
+          headers: {
+            "Content-Type":"application/json",
+            "Authorization": "Bearer $accessToken",
+          }
+      );
+
+      // Đóng dialog sau khi có phản hồi từ server
+      Navigator.of(context).pop();
+
+      if(res.statusCode == 200){
+        Map<String,dynamic> json = jsonDecode(res.body);
+        List<dynamic> data = json['data'];
+        List<CandidateRegistedForElectionsModel> electionVoterHavePaticipanted
+        = data.map((e) => CandidateRegistedForElectionsModel.fromMap(e)).toList();
+
+        notifyListeners();
+        return electionVoterHavePaticipanted;
+      }else{
+        notifyListeners();
+        throw Exception('Failed to load data');
+      }
+    }catch(e){
+      if (e is SocketException) {
+        throw Exception('No internet connection');
+      } else if (e is HttpException) {
+        throw Exception('HTTP error: ${e.message}');
+      } else if (e is FormatException) {
+        throw Exception('Bad response format');
+      } else {
+        throw Exception('Error occurred while fetching data: $e');
+      }
+    }
+  }
+
 }

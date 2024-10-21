@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:table_calendar/table_calendar.dart';  // Sử dụng package này để hiển thị lịch
+import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
+import 'package:table_calendar/table_calendar.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/ElectionModel.dart';
 import 'package:votesecure/src/domain/repositories/UserRepository.dart';
@@ -16,10 +18,15 @@ class ElectioncalenderScreen extends StatefulWidget {
 }
 
 class _ElectioncalenderScreenState extends State<ElectioncalenderScreen> {
-  DateTime _selectedDay = DateTime.now(); // Ngày hiện tại
-  CalendarFormat _calendarFormat = CalendarFormat.month; // Định dạng lịch
-  WidgetlibraryState widgetLibraryState = WidgetlibraryState();
-  Map<DateTime, List<ElectionModel>> _events = {};
+  // Khai báo biến với giá trị mặc định thay vì dùng late
+  DateTime _selectedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+
+  final WidgetlibraryState widgetLibraryState = WidgetlibraryState();
+  final List<ElectionModel> _danhSachCacCuocBauCuTuongLaiList = [];
+  late Future<List<ElectionModel>> _danhSachCacCuocBauCuTuongLaiFuture;
+  final Map<DateTime, List<ElectionModel>> _events = {};
   final UserRepository userRepository = UserRepository();
 
   @override
@@ -28,94 +35,65 @@ class _ElectioncalenderScreenState extends State<ElectioncalenderScreen> {
     _fetchAndSetEvents();
   }
 
+  // Sửa lại hàm _getEventsForDay để xử lý chính xác các sự kiện cùng ngày
+  List<ElectionModel> _getEventsForDay(DateTime day) {
+    // Chuẩn hóa ngày bằng cách loại bỏ thông tin về giờ, phút, giây
+    final normalizedDay = DateTime(day.year, day.month, day.day);
+
+    // Tìm tất cả các sự kiện trong ngày này
+    List<ElectionModel> dayEvents = [];
+    _events.forEach((key, events) {
+      // Chuẩn hóa key date để so sánh
+      final keyDate = DateTime(key.year, key.month, key.day);
+      if (keyDate.isAtSameMomentAs(normalizedDay)) {
+        dayEvents.addAll(events);
+      }
+    });
+
+    // Sắp xếp các sự kiện theo thời gian
+    dayEvents.sort((a, b) => a.ngayBD.compareTo(b.ngayBD));
+    return dayEvents;
+  }
+
   @override
   void dispose() {
     super.dispose();
   }
 
-  void _fetchAndSetEvents() async {
-    List<ElectionModel> elections = await userRepository.getListOfFuture_Elections(context);
-    _addEvents(elections);
-  }
+  Future<void> _fetchAndSetEvents() async {
+    try {
+      final controller = Provider.of<UserRepository>(context, listen: false);
+      _danhSachCacCuocBauCuTuongLaiFuture = controller.getListOfFuture_Elections(context);
 
-  //Thêm sự kiện vào lịch
-  void _addEvents(List<ElectionModel> elections){
-    _events.clear();
+      final kybaucu = await _danhSachCacCuocBauCuTuongLaiFuture;
 
-    for(var election in elections){
-      //Định dạng lại ngày tháng năm
-      DateTime ngayBD = DateTime(election.ngayBD.year, election.ngayBD.month, election.ngayBD.day);
-      DateTime ngayKT = DateTime(election.ngayKT.year, election.ngayKT.month, election.ngayKT.day);
-      print("Parsed ngayBD: ${election.ngayBD}, ngayKT: ${election.ngayKT}");
+      if (mounted) {
+        setState(() {
+          _danhSachCacCuocBauCuTuongLaiList.clear();
+          _danhSachCacCuocBauCuTuongLaiList.addAll(kybaucu);
 
-      // Add ngayBD to the events map
-      if (_events[ngayBD] == null) {
-        _events[ngayBD] = [];
+          // Cập nhật events
+          for (var election in _danhSachCacCuocBauCuTuongLaiList) {
+            final startDate = DateTime(
+              election.ngayBD.year,
+              election.ngayBD.month,
+              election.ngayBD.day,
+              election.ngayBD.hour,
+              election.ngayBD.minute,
+              election.ngayBD.second,
+            );
+            print(startDate);
+
+            _events[startDate] = [...(_events[startDate] ?? []), election];
+
+            // Sắp xếp các sự kiện trong cùng một ngày
+            _events[startDate]!.sort((a, b) => a.ngayBD.compareTo(b.ngayBD));
+          }
+        });
       }
-      _events[ngayBD]!.add(election);
-
-      // Add ngayKT to the events map if it's different from ngayBD
-      if (!isSameDay(ngayBD, ngayKT)) {
-        if (_events[ngayKT] == null) {
-          _events[ngayKT] = [];
-        }
-        _events[ngayKT]!.add(election);
-      }
-      setState(() {});
+    } catch (e) {
+      print('Lỗi khi tải dữ liệu: $e');
     }
-  }
-
-  void _onDaySelected(DateTime day, DateTime focusedDay) {
-    setState(() {
-      _selectedDay = day;
-    });
-
-    //Lấy danh sách ngày được chọn
-    List<ElectionModel>? events = _events[day];
-    if (events != null && events.isNotEmpty) {
-      _showBottomSheet(context, day, events);
-    } else {
-      _showBottomSheet(context, day, []);
-    }
-  }
-
-  // Cập nhật ngày hiện tại dựa trên tháng được chọn
-  void _onMonthSelected(int month) {
-    setState(() {
-      _selectedDay = DateTime(_selectedDay.year, month, _selectedDay.day);
-    });
-  }
-
-  //Hiển thị thông tin cụ thể về ngày
-  void _showBottomSheet(BuildContext context, DateTime day, List<ElectionModel> events) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          height: 250,
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Details for ${day.day}/${day.month}/${day.year}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              ...events.map((election) => Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Tên kỳ bầu cử: ${election.tenKyBauCu ?? 'null'}'),
-                  Text('Mô tả: ${election.mota ?? 'null'}'),
-                  SizedBox(height: 10),
-                ],
-              )),
-            ],
-          ),
-        );
-      },
-      isScrollControlled: true,
-    );
   }
 
   @override
@@ -124,135 +102,163 @@ class _ElectioncalenderScreenState extends State<ElectioncalenderScreen> {
       appBar: AppTitle(textTitle: 'Lịch bầu cử'),
       body: Stack(
         children: [
-          widgetLibraryState.buildPageBackgroundGradient2Color(context, '0xffece9e6', '0xffffffff'),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _BuildTitleDisplayDateTime(context),
-                  SizedBox(height: 20),
-                  _buildElectionCalendar(context),
-                  SizedBox(height: 30,),
-                  _buildMonthSelector(context),
-                ],
-              ),
-            ),
+          widgetLibraryState.buildPageBackgroundGradient2Color(
+              context,
+              '0xffece9e6',
+              '0xffffffff'
           ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 15, 10, 0),
+            child: Column(
+              children: [
+                _buildingA_ScheduleFrame(context),
+                Expanded(
+                    child: _InformationAboutTheDayEvents(context)
+                )
+              ],
+            ),
+          )
         ],
       ),
     );
   }
 
-  // Xay dựng phần Bố Trí tiêu đè
-  Widget _BuildTitleDisplayDateTime(BuildContext context){
-    return Text(
-      '${_selectedDay.day}/${_selectedDay.month}/${_selectedDay.year}.',
-      style: TextStyle(
-        fontSize: 30,
-        fontWeight: FontWeight.w800,
-        color: Colors.blue,
-      ),
-    );
-  }
-
-  //Xây dựng phần hiển thị lịch
-  Widget _buildElectionCalendar(BuildContext context) {
-    return TableCalendar(
-      firstDay: DateTime.utc(1990, 1, 1),
-      lastDay: DateTime.utc(2100, 12, 31),
-      focusedDay: _selectedDay,
+  Widget _buildingA_ScheduleFrame(BuildContext context) {
+    return TableCalendar<ElectionModel>(
+      firstDay: DateTime.utc(2000, 1, 1),
+      lastDay: DateTime.utc(2040, 12, 31),
+      focusedDay: _focusedDay,
+      selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
       calendarFormat: _calendarFormat,
-      selectedDayPredicate: (day) {
-        return isSameDay(_selectedDay, day);
+      eventLoader: _getEventsForDay,
+      onDaySelected: (selectedDay, focusedDay) {
+        setState(() {
+          _selectedDay = selectedDay;
+          _focusedDay = focusedDay;
+        });
       },
-      eventLoader: (day) {
-        return _events[day] ?? [];
-      },
-      onDaySelected: _onDaySelected,
       onFormatChanged: (format) {
         setState(() {
           _calendarFormat = format;
         });
       },
-      calendarBuilders: CalendarBuilders(
-        markerBuilder: (context, date, events) {
-          // Check if the current date is ngayBD or ngayKT
-          bool isNgayBD = _events[date]?.any((e) => isSameDay(date, e.ngayBD)) ?? false;
-          bool isNgayKT = _events[date]?.any((e) => isSameDay(date, e.ngayKT)) ?? false;
-
-          // Show markers based on the conditions
-          if (isNgayBD && isNgayKT) {
-            return Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.purple, // Use a combined color if both dates match
-              ),
-              width: 16,
-              height: 16,
-            );
-          } else if (isNgayBD) {
-            return Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.blue, // Blue for start date
-              ),
-              width: 16,
-              height: 16,
-            );
-          } else if (isNgayKT) {
-            return Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.yellow, // Yellow for end date
-              ),
-              width: 16,
-              height: 16,
-            );
-          }
-          return null; // No marker
-        },
+      calendarStyle: CalendarStyle(
+        markersMaxCount: 5,
+        markerDecoration: BoxDecoration(
+          color: Colors.blue,
+          shape: BoxShape.circle,
+        ),
+        tableBorder: TableBorder.all(
+            color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(5)
+        ),
+        
       ),
       headerStyle: HeaderStyle(
-        formatButtonVisible: false,
         titleCentered: true,
-      ),
-    );
-  }
+        formatButtonDecoration:  BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22.0),
+        ),
+        formatButtonTextStyle: TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold),
+        formatButtonShowsNext: false,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xff0052d4), Color(0xff4364f7), Color(0xff6fb1fc)],
+            stops: [0, 0.5, 1],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+            borderRadius: BorderRadius.circular(5),
+        ),
+        titleTextStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
 
-  // Tạo danh sách các tháng (1-12) để hiển thị
-  Widget _buildMonthSelector(BuildContext context) {
-    return Container(
-      height: 60, // Chiều cao của thanh chọn tháng
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal, // Cuộn ngang
-        itemCount: 12, // Có 12 tháng trong năm
-        itemBuilder: (context, index) {
-          int month = index + 1;
-          return GestureDetector(
-            onTap: () {
-              _onMonthSelected(month); // Cập nhật tháng khi người dùng chọn
-            },
+      ),
+      // Thêm những thuộc tính này để hiển thị marker tốt hơn
+      calendarBuilders: CalendarBuilders(
+        markerBuilder: (context, date, events) {
+          if (events.isEmpty) return null;
+          return Positioned(
+            bottom: 1,
             child: Container(
-              width: 50,
-              alignment: Alignment.center,
-              margin: EdgeInsets.symmetric(horizontal: 8.0),
               decoration: BoxDecoration(
-                color: _selectedDay.month == month ? Colors.blue : Colors.grey[300], // Đổi màu khi tháng được chọn
-                borderRadius: BorderRadius.circular(80),
+                shape: BoxShape.circle,
+                color: Colors.blue,
               ),
-              child: Text(
-                '$month',
-                style: TextStyle(
-                  color: _selectedDay.month == month ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.bold,
+              width: 6.0,
+              height: 6.0,
+              child: Center(
+                child: Text(
+                  '${events.length}',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 4.0,
+                  ),
                 ),
               ),
             ),
           );
         },
       ),
+    );
+  }
+
+  Widget _InformationAboutTheDayEvents(BuildContext context) {
+    final events = _getEventsForDay(_selectedDay);
+
+    if (events.isEmpty) {
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            FractionallySizedBox(
+              child: Lottie.asset(
+                  'assets/animations/NoEvent.json',
+                  repeat: true,
+                  fit: BoxFit.contain,
+                  height: 200,
+                  width: double.infinity
+              ),
+            ),
+            SizedBox(height: 10,),
+            const Center(
+              child: Text('Không có sự kiện nào trong ngày này'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: events.length,
+      itemBuilder: (context, index) {
+        final event = events[index];
+        return Container(
+          margin: const EdgeInsets.symmetric(
+            horizontal: 12.0,
+            vertical: 4.0,
+          ),
+          decoration: BoxDecoration(
+            border: Border.all(),
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          child: ListTile(
+            title: Text(event.tenKyBauCu ?? 'Chưa có tên'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Bắt đầu: ${DateFormat('HH:mm').format(event.ngayBD)}',
+                  style: TextStyle(fontSize: 14),
+                ),
+                Text(
+                  'Kết thúc: ${DateFormat('dd/MM/yyyy').format(event.ngayKT)}',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -38,7 +38,6 @@ class UserRepository with ChangeNotifier{
           }
       );
 
-      print(res.body);
       // Đóng dialog sau khi có phản hồi từ server
       Navigator.of(context).pop();
 

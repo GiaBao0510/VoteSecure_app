@@ -49,7 +49,11 @@ Future<void> main() async{
 
 //Chỉ hoạt động trên đây
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+  final HoSoNguoiDung = new ProfileModel
+    (SDT: 'null',HoTen: 'null',GioiTinh: 'null',
+      Email:'null', DiaChi: 'null',HinhAnh: 'null',
+      NgaySinh: DateTime.now(),TenDanToc: 'null', ID_Object: 'null', ID_User: 'null');
 
   Future<Widget> ApplicationInitialization(BuildContext context) async{
     //Kiểm tra kết nối mạng
@@ -65,13 +69,8 @@ class MyApp extends StatelessWidget {
 
       switch(Logined){
         case -1: return loginPages();
-        case 2: return Homecadidate();
-        case 5: return homeVoter(user:
-          ProfileModel
-            (SDT: 'null',HoTen: 'null',GioiTinh: 'null',
-            Email:'null', DiaChi: 'null',HinhAnh: 'null',
-            NgaySinh: DateTime.now(),TenDanToc: 'null', ID_Object: 'null', ID_User: 'null')
-          ,);
+        case 2: return Homecadidate(user: HoSoNguoiDung,);
+        case 5: return homeVoter(user:HoSoNguoiDung,);
         case 8: return HomeCadre();
         default: return loginPages();
       }
