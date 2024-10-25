@@ -6,14 +6,15 @@ import 'package:votesecure/src/domain/repositories/UserRepository.dart';
 
 class FeedbackPage extends StatefulWidget {
   static const routeName = 'send-comments';
-  final String IDSender;
+  final String IDSender,uri;
   const FeedbackPage({
     super.key,
-    required this.IDSender
+    required this.IDSender,
+    required this.uri
   });
 
   @override
-  _FeedbackPageState createState() => _FeedbackPageState(IDSender: IDSender);
+  _FeedbackPageState createState() => _FeedbackPageState(IDSender: IDSender,uri: uri);
 }
 
 class _FeedbackPageState extends State<FeedbackPage> {
@@ -21,8 +22,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
   final UserRepository userRepository = UserRepository();
   WidgetlibraryState widgetlibraryState = WidgetlibraryState();
   final TextEditingController _messageController = TextEditingController();
-  final String IDSender;
-  _FeedbackPageState({required this.IDSender});
+  final String IDSender, uri;
+  _FeedbackPageState({required this.IDSender, required this.uri});
   ContactUsModel contactUsModel = ContactUsModel('', '');
 
   @override
@@ -122,7 +123,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                               if (_formKey.currentState?.validate() ?? false) {
                                 contactUsModel.IDSender = IDSender;
 
-                                await userRepository.SendComments(context, contactUsModel);
+                                await userRepository.SendComments(context, contactUsModel, uri);
 
                                 setState(() {
                                   _messageController.clear();

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart';
-import 'package:flutter/material.dart';
+import 'package:votesecure/src/config/AppConfig_api.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/domain/repositories/UserRepository.dart';
 import 'package:votesecure/src/presentation/pages/candidate/ListOfRegisteredCandidate.dart';
 import 'package:votesecure/src/presentation/pages/common/ElectionCalender/ElectionCalender.dart';
-import 'package:votesecure/src/presentation/pages/voter/ListElections.dart';
+import 'package:votesecure/src/presentation/pages/common/SupportInformationSubmission/SupportInformationSubmission_page.dart';
+import 'package:votesecure/src/presentation/pages/common/account/Account.dart';
 import 'package:votesecure/src/presentation/widgets/TitleAppBarForHomePage.dart';
 
 class Homecadidate extends StatefulWidget {
@@ -38,8 +39,8 @@ class _HomecadidateState extends State<Homecadidate> {
     super.initState();
     _pages = [
       HomeScreen(ID_object: user.ID_Object ?? '',),
-      // ActivityScreen(),
-      // UserAccount(user: user),
+      ActivityScreen(),
+      UserAccount(user: user,uri: candidateSendContactUs),
     ];
     Email = user.Email ?? 'null';
   }
@@ -97,7 +98,7 @@ class HomeScreen extends StatelessWidget {
   
   HomeScreen({
     super.key,
-    required this.ID_object
+    required this.ID_object,
   });
 
   @override
@@ -195,7 +196,42 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                         Expanded(
-                          child: widgetlibraryState.buildMenuItem(context,'Gửi thông tin \nliên hệ', Icons.send_rounded, ''),
+                          child: GestureDetector(
+                            onTap: () {
+                              print("ID_object: $ID_object - urí: $candidateSendContactUs");
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => FeedbackPage(IDSender: ID_object,uri: candidateSendContactUs,))
+                              );
+                            },
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Container(
+                                    decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [Color(0xff44a4fd), Color(0xff3f5efb)],
+                                          stops: [0.25, 0.75],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10)
+                                    ),
+                                    height: 50,
+                                    width: 50,
+                                    child: Icon(Icons.send_rounded, size: 40,color: Colors.white,)
+                                ),
+                                SizedBox(height: 8),
+                                FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: Text(
+                                      'Gửi thông tin \nliên hệ', style: TextStyle(fontSize: 15),
+                                      textAlign: TextAlign.center,
+                                    )
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -219,4 +255,12 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+class ActivityScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Activity Page'),
+    );
+  }
+}
 

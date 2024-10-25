@@ -5,6 +5,7 @@ import 'package:quickalert/quickalert.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/CandidateRegistedForElectionsModel.dart';
 import 'package:votesecure/src/domain/repositories/CandidateRepository.dart';
+import 'package:votesecure/src/presentation/pages/candidate/ListOfCandaitesBasedOnElecionDatePage.dart';
 import 'package:votesecure/src/presentation/widgets/TitleAppBar.dart';
 import 'package:votesecure/src/presentation/widgets/searchBar.dart';
 import 'package:votesecure/src/presentation/pages/shared/LoadingPage.dart';
@@ -146,24 +147,10 @@ class _ListofRegisteredCandidateScreenState extends State<ListofRegisteredCandid
                     ),
                     child: ElevatedButton(
                       onPressed: (){
-
-                        print("Ngày hiện tại: $current");
-                        print("Ngày kết thúc: $ngayKT");
-                        if(current.isAfter(ngayKT) == false){
-                          print('Đi đến form bỏ phiếu');
-                          // Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(builder: (context) => BallotForm(ngayBD: _fillDanhSachBauCuList[index].ngayBD, electionDetails: _fillDanhSachBauCuList[index],ID_object: ID_object, ))
-                          // );
-                        }else{
-                          print("Đã qua");
-                          QuickAlert.show(
-                              context: context,
-                              type: QuickAlertType.warning,
-                              title: "Đã bỏ phiếu",
-                              text: "Bạn đã bỏ phiếu ở kỳ này rồi"
-                          );
-                        }
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ListOfCandidatesBasedOnElectionDateScreen(ngayBD: _fillDanhSachBauCuList[index].ngayBD ?? '', ))
+                        );
                       },
                       style: ButtonStyle(
                         backgroundColor:

@@ -87,9 +87,6 @@ class _BallotFormState extends State<BallotForm> {
     });
   }
 
-  //Theo dõi tình trạng các ô checkbox
-
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -392,7 +389,7 @@ class _BallotFormState extends State<BallotForm> {
                         ),
                         actions: [
                           TextButton(
-                            child: Text('Hủy'),
+                            child: Text('Chỉnh sửa'),
                             onPressed: () {
                               Navigator.of(context).pop(false);
                             },

@@ -41,6 +41,7 @@ Future<void> main() async{
       ChangeNotifierProvider(create: (_) => VoterRepository()),
       ChangeNotifierProvider(create: (_) => UserRepository()),
       ChangeNotifierProvider(create: (_) => CandidateRepository()),
+
     ],
       child:  MyApp()
     )
@@ -71,7 +72,7 @@ class MyApp extends StatelessWidget {
         case -1: return loginPages();
         case 2: return Homecadidate(user: HoSoNguoiDung,);
         case 5: return homeVoter(user:HoSoNguoiDung,);
-        case 8: return HomeCadre();
+        case 8: return HomeCadre(user:HoSoNguoiDung);
         default: return loginPages();
       }
     }else{

@@ -133,10 +133,9 @@ class UserRepository with ChangeNotifier{
   }
 
   //Gửi thông tin liên he
-  Future SendComments(BuildContext context, ContactUsModel sender) async{
+  Future SendComments(BuildContext context, ContactUsModel sender, String uri) async{
     try{
       final accessToken = await _tokenRepository.getAccessToken();
-      String uri = voterSendContactUs;
       print('path: $uri');
 
       var res = await http.post(

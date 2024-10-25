@@ -9,11 +9,13 @@ import 'package:votesecure/src/presentation/pages/common/profile/Profile.dart';
 class UserAccount extends StatelessWidget {
   static const routeName = 'user-account';
   final ProfileModel user;
+  final String uri;
   final UserRepository userRepository = UserRepository();
 
   UserAccount({
     super.key,
-    required this.user
+    required this.user,
+    required this.uri
   });
 
   @override
@@ -119,7 +121,7 @@ class UserAccount extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => FeedbackPage(IDSender: user.ID_Object ?? '' ,))
+                        MaterialPageRoute(builder: (context) => FeedbackPage(IDSender: user.ID_Object ?? '' ,uri:  uri,))
                     );
                   },
                 ),

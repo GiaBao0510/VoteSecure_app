@@ -4,6 +4,8 @@ import 'package:votesecure/src/data/models/ElectionsVotersHavePaticipated_Model.
 import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/data/models/VerifyOtpModel.dart';
 import 'package:votesecure/src/data/models/VoterInformationAfterScaningModel.dart';
+import 'package:votesecure/src/presentation/pages/cadre/ListOfCadreJoinedForElection.dart';
+import 'package:votesecure/src/presentation/pages/candidate/ListOfCandaitesBasedOnElecionDatePage.dart';
 import 'package:votesecure/src/presentation/pages/candidate/ListOfRegisteredCandidate.dart';
 import 'package:votesecure/src/presentation/pages/common/Policy/Policy_private.dart';
 import 'package:votesecure/src/presentation/pages/common/SupportInformationSubmission/SupportInformationSubmission_page.dart';
@@ -37,12 +39,12 @@ final CuTriDaDuocThamDuKyBauCu =  new ElectionVoterHavePaticipanted_Model(
 final Map<String, WidgetBuilder> routes = {
   Nonetwork.routerName: (ctx) => Nonetwork(),
   loginPages.routeName: (ctx) => loginPages(),
-  UserAccount.routeName: (ctx) => UserAccount(user: HoSoNguoiDung,),
+  UserAccount.routeName: (ctx) => UserAccount(user: HoSoNguoiDung,uri: '',),
   ServerErrorPage.routeName:(ctx) => ServerErrorPage(ErrorRecordedInText: "",),
   LoadingPage.routeName:(ctx) => LoadingPage(),
   homeVoter.routeName:(ctx) => homeVoter(user: HoSoNguoiDung,),
   Homecadidate.routeName:(ctx) => Homecadidate(user: HoSoNguoiDung,),
-  HomeCadre.routeName:(ctx) => HomeCadre(),
+  HomeCadre.routeName:(ctx) => HomeCadre(user: HoSoNguoiDung,),
   VerificationCodeScreen.routeName:(ctx) => VerificationCodeScreen(verifyOtp: new verifyOtpModel('','',''), Email: '',),
   VerificationCode_ForgotPwdScreen.routeName:(ctx) => VerificationCode_ForgotPwdScreen(verifyOtp: new verifyOtpModel('','',''),Email: '',),
   ChangePasswordScreen.routeName:(ctx) => ChangePasswordScreen(Email: '',),
@@ -51,10 +53,12 @@ final Map<String, WidgetBuilder> routes = {
   ElectioncalenderScreen.routeName:(ctx) => ElectioncalenderScreen(),
   ListElectionsScreen.routeName:(ctx) => ListElectionsScreen(ID_object: '',),
   PrivacyPolicyPage.routeName:(ctx) => ListElectionsScreen(ID_object: '',),
-  FeedbackPage.routeName:(ctx) => FeedbackPage(IDSender: '',),
+  FeedbackPage.routeName:(ctx) => FeedbackPage(IDSender: '',uri: '',),
   BallotForm.routeName:(ctx) => BallotForm(ngayBD: '',ID_object: '' ,
     electionDetails: CuTriDaDuocThamDuKyBauCu,),
   EditProfilePage.routeName:(ctx) => EditProfilePage(user:HoSoNguoiDung ,),
   RegisterAndSetPwdScreen.routeName:(ctx) => RegisterAndSetPwdScreen(SDT: '',),
   ListofRegisteredCandidateScreen.routeName:(ctx) => ListofRegisteredCandidateScreen(ID_ucv: '',),
+  ListOfCandidatesBasedOnElectionDateScreen.routeName:(ctx) =>ListOfCandidatesBasedOnElectionDateScreen(ngayBD: '',),
+  ListOfCadreJoinedForElection.routeName:(ctx) => ListOfCadreJoinedForElection(ID_CanBo: '',),
 };
