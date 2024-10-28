@@ -413,23 +413,23 @@ class _BallotFormState extends State<BallotForm> {
                   if (confirmResult == true) {
                     //Hiển thị thông tin trước khi tính giá trị phiếu bầu
                     print('--------- Thông tin trước khi tính giá trị phiếu bầu --------');
-                    print('Số lượt bình chọn tối đa: ${electionDetails.soLuotBinhChonToiDa}');
-                    print('Số lượng cử tri: ${electionDetails.soLuongToiDaCuTri}');
-                    print('Số lượng ứng viên: ${electionDetails.soLuongToiDaUngCuVien}');
+                    print('Số lượt bình chọn tối đa (S): ${electionDetails.soLuotBinhChonToiDa}');
+                    print('Số lượng cử tri (N): ${electionDetails.soLuongToiDaCuTri}');
+                    print('Số lượng ứng viên (K): ${electionDetails.soLuongToiDaUngCuVien}');
                     print('Số lượng bình chọn hiện tại đã chọn: ${DemSoLuotBinhChon}');
                     print('Thông tin phiếu bầu: ${ThongTinPhieuBau}');
 
-                    int b = electionDetails.soLuongToiDaUngCuVien + 1; //Cơ số b-phân
+                    int b = electionDetails.soLuongToiDaCuTri + 1; //Cơ số b-phân
                     print('Cơ số b phân: ${b}');
                     BigInt GiaTriPhieu = BigInt.zero;
                     for (int i = 0; i < ThongTinPhieuBau.length; i++) {
                       GiaTriPhieu += BigInt.from(ThongTinPhieuBau[i]) * BigInt.from(math.pow(b, i));
                     }
-                    print('Giá trị phiếu: ${GiaTriPhieu}');
-                    print('ID_cutri: ${ID_object}');
-                    print('iD_cap: ${electionDetails.iD_Cap}');
-                    print('iD_DonViBauCu: ${electionDetails.iD_Cap}');
-                    print('ngayBD: ${electionDetails.ngayBD}');
+                    // print('Giá trị phiếu: ${GiaTriPhieu}');
+                    // print('ID_cutri: ${ID_object}');
+                    // print('iD_cap: ${electionDetails.iD_Cap}');
+                    // print('iD_DonViBauCu: ${electionDetails.iD_Cap}');
+                    // print('ngayBD: ${electionDetails.ngayBD}');
                     print('-----------------------------------------');
 
                     try {

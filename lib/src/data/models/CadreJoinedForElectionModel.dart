@@ -75,10 +75,10 @@ class CadreJoinedForElectionModel{
       tenDonViBauCu: map['tenDonViBauCu'] ?? 'null',
       ngayBD: map['ngayBD'] ?? 'null',
       ngayKT: map['ngayKT'] ?? 'null',
-      CongBo: map['CongBo'] ?? 'null',
-      SoLuongToiDaCuTri: map['SoLuongToiDaCuTri'] ?? 0,
-      SoLuongToiDaUngCuVien: map['SoLuongToiDaUngCuVien'] ?? 0,
-      SoLuotBinhChonToiDa: map['SoLuotBinhChonToiDa'] ?? 0,
+      CongBo: map['congBo'] ?? 'null',
+      SoLuongToiDaCuTri: map['soLuongToiDaCuTri'] ?? 0,
+      SoLuongToiDaUngCuVien: map['soLuongToiDaUngCuVien'] ?? 0,
+      SoLuotBinhChonToiDa: map['soLuotBinhChonToiDa'] ?? 0,
     );
   }
 }

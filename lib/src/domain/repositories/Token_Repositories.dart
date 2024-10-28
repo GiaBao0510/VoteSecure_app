@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class TokenRepository with ChangeNotifier{
 
@@ -43,5 +44,14 @@ class TokenRepository with ChangeNotifier{
   Future<void> deleteRefreshToken() async{
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.remove('refreshToken');
+  }
+
+  //Kiểm tra RefreshToken còn hạn không. Nếu không thì xóa token và về trang chính
+  Future<bool> CheckTokenName_isExpired(String TokenName) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    String Token = await pref.getString(TokenName) ?? '';
+
+    if(Token.isEmpty) return false;
+    return JwtDecoder.isExpired(Token);
   }
 }

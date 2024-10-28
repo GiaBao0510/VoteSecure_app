@@ -65,8 +65,12 @@ class WorkWithOtpRepository with ChangeNotifier{
             text: message
         );
       }else {
-        throw Exception(
-            'Failed to load data. Status code: ${res.statusCode}');
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            title: "Lỗi",
+            text: 'Failed to load data. Status code: ${res.statusCode}'
+        );
       }
     }catch(e){
       if (e is SocketException) {
