@@ -74,6 +74,14 @@ class CandidateInfoPage extends StatelessWidget {
                     ),
                     SizedBox(height: 8),
                     Text(
+                      '${candidateInfo.Email  ?? ''}',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
                       '${widgetlibraryState.DateFormat2(candidateInfo.NgaySinh  ?? '')}',
                       style: TextStyle(
                         fontSize: 16,
@@ -89,43 +97,6 @@ class CandidateInfoPage extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 8),
-                    RichText(
-                      text: TextSpan(
-                        style: TextStyle(color: Colors.white),
-                        children: [
-                          TextSpan(
-                              text: 'Số lượt bình chọn: ',
-                              style: TextStyle(
-                                  fontSize: 13, fontWeight: FontWeight.bold)),
-                          TextSpan(
-                              text:
-                              '${candidateInfo.soLuotBinhChon}',
-                              style: TextStyle(
-                                fontSize: 11,
-                              )),
-                        ],
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                    SizedBox(height: 8),
-                    RichText(
-                      text: TextSpan(
-                        style: TextStyle(color: Colors.white),
-                        children: [
-                          TextSpan(
-                              text: 'Tỷ lệ bình chọn: ',
-                              style: TextStyle(
-                                  fontSize: 13, fontWeight: FontWeight.bold)),
-                          TextSpan(
-                              text:
-                              '${candidateInfo.tyLeBinhChon}',
-                              style: TextStyle(
-                                fontSize: 11,
-                              )),
-                        ],
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
                   ],
                 ),
               ),

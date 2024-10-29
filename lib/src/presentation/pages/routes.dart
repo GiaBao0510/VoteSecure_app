@@ -9,6 +9,10 @@ import 'package:votesecure/src/presentation/pages/cadre/DetailedListOfVotesBased
 import 'package:votesecure/src/presentation/pages/cadre/ListOfCadreJoinedForElection.dart';
 import 'package:votesecure/src/presentation/pages/candidate/ListOfCandaitesBasedOnElecionDatePage.dart';
 import 'package:votesecure/src/presentation/pages/candidate/ListOfRegisteredCandidate.dart';
+import 'package:votesecure/src/presentation/pages/common/ChangePwd/ChangePwd.dart';
+import 'package:votesecure/src/presentation/pages/common/ElectionResult/ElectionResultScreen.dart';
+import 'package:votesecure/src/presentation/pages/common/ElectionResult/ListOfCandidatesBasedOnElectionResults.dart';
+import 'package:votesecure/src/presentation/pages/common/Notification/AnnouncemantPage.dart';
 import 'package:votesecure/src/presentation/pages/common/Policy/Policy_private.dart';
 import 'package:votesecure/src/presentation/pages/common/SupportInformationSubmission/SupportInformationSubmission_page.dart';
 import 'package:votesecure/src/presentation/pages/common/profile/Profile.dart';
@@ -69,4 +73,8 @@ final Map<String, WidgetBuilder> routes = {
   ListOfCadreJoinedForElection.routeName:(ctx) => ListOfCadreJoinedForElection(ID_CanBo: '',),
   DetailedListOfVotesBasedOnTheElection.routeName:(ctx) => DetailedListOfVotesBasedOnTheElection(ngayBD: '',cadreJoinedForElectionModel: CanBoThamDuCuocBauCu,),
   ProfileUserScreen.routeName: (ctx) =>ProfileUserScreen(ID_user: '',),
+  AnnouncementScreen.routeName: (ctx) => AnnouncementScreen(ID_object: '',),
+  ElectionResultScreen.routeName: (ctx) => ElectionResultScreen(ID_obj: '',),
+  ListOfCandidatesBasedOnElectionResultScreen.routeName: (ctx) => ListOfCandidatesBasedOnElectionResultScreen(ngayBD: '',),
+  ChangePasswordPage.routeName: (ctx) => ChangePasswordPage(ID_user: '',),
 };

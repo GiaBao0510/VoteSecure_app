@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
+import 'package:votesecure/src/data/models/ChangePwdModel.dart';
 import 'package:votesecure/src/data/models/ContactUsModel.dart';
 import 'package:votesecure/src/data/models/ElectionModel.dart';
 import 'package:flutter/cupertino.dart';
@@ -236,6 +237,65 @@ class UserRepository with ChangeNotifier{
       else{
         throw Exception(
             'Failed to send comments. Status code: ${res.statusCode}');
+      }
+    }catch (e) {
+      if (e is SocketException) {
+        throw Exception('No internet connection: ${e.message}');
+      } else if (e is HttpException) {
+        throw Exception('HTTP error: ${e.message}');
+      } else if (e is FormatException) {
+        throw Exception('Bad response format: ${e.message}');
+      } else {
+        throw Exception('Error occurred while fetching data: $e');
+      }
+    }
+  }
+
+  //Hàm thực hiện thay đổi ật khẩu
+  Future ChangeUserPwd(BuildContext context, ChangeUserPwdModel UserPwd, String ID_user )async{
+    try{
+      final accessToken = await _tokenRepository.getAccessToken();
+      String uri = changePWD+ID_user;
+      print('path: ${uri}');
+
+      //Chờ đợi
+      widgetlibraryState.buildingAwaitingFeedback(context);
+
+      var res = await http.put(
+          Uri.parse(uri),
+          headers: {
+            'content-type':'application/json',
+            'Accept': 'application/json',
+            "Authorization": "Bearer $accessToken",
+          },
+          body: jsonEncode({
+            "newPwd": UserPwd.newPwd,
+            "oldPwd": UserPwd.oldPwd
+          })
+      );
+
+      //Đóng chờ đợi
+      Navigator.of(context, rootNavigator: true).pop();
+
+      final thongTinPhanHoi = jsonDecode(res.body);
+      String message = thongTinPhanHoi['message'] ?? "null";
+      if(res.statusCode == 200){
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.success,
+            title: "Status: ${res.statusCode}",
+            text: message
+        );
+      }else if(res.statusCode >= 400  && res.statusCode <500){
+        QuickAlert.show(
+            context: context,
+            type: QuickAlertType.error,
+            title: "Lỗi khi đổi mật khẩu\nStatus: ${res.statusCode}",
+            text: message
+        );
+      }else {
+        throw Exception(
+            'Failed to load data. Status code: ${res.statusCode}');
       }
     }catch (e) {
       if (e is SocketException) {

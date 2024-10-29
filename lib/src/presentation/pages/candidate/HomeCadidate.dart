@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart';
@@ -7,6 +8,8 @@ import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/domain/repositories/UserRepository.dart';
 import 'package:votesecure/src/presentation/pages/candidate/ListOfRegisteredCandidate.dart';
 import 'package:votesecure/src/presentation/pages/common/ElectionCalender/ElectionCalender.dart';
+import 'package:votesecure/src/presentation/pages/common/ElectionResult/ElectionResultScreen.dart';
+import 'package:votesecure/src/presentation/pages/common/Notification/AnnouncemantPage.dart';
 import 'package:votesecure/src/presentation/pages/common/SupportInformationSubmission/SupportInformationSubmission_page.dart';
 import 'package:votesecure/src/presentation/pages/common/account/Account.dart';
 import 'package:votesecure/src/presentation/widgets/TitleAppBarForHomePage.dart';
@@ -39,7 +42,7 @@ class _HomecadidateState extends State<Homecadidate> {
     super.initState();
     _pages = [
       HomeScreen(ID_object: user.ID_Object ?? '',),
-      ActivityScreen(),
+      AnnouncementScreen(ID_object: user.ID_Object ?? '',),
       UserAccount(user: user,uri: candidateSendContactUs),
     ];
     Email = user.Email ?? 'null';
@@ -238,8 +241,44 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 15,),
                     Row(
                       children: [
+                        //Xem kết qua bầu cử
                         Expanded(
-                          child: widgetlibraryState.buildMenuItem(context,'Xem kết quả \nbầu cử', Icons.newspaper, ''),
+                          child: GestureDetector(
+                            onTap: () {
+                              print("ID_object: $ID_object - urí: $candidateSendContactUs");
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => ElectionResultScreen(ID_obj: ID_object,))
+                              );
+                            },
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Container(
+                                    decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [Color(0xff44a4fd), Color(0xff3f5efb)],
+                                          stops: [0.25, 0.75],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10)
+                                    ),
+                                    height: 50,
+                                    width: 50,
+                                    child: Icon(CupertinoIcons.list_bullet_below_rectangle, size: 40,color: Colors.white,)
+                                ),
+                                SizedBox(height: 8),
+                                FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: Text(
+                                      'Kết quả \nbầu cử', style: TextStyle(fontSize: 15),
+                                      textAlign: TextAlign.center,
+                                    )
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -254,13 +293,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
-class ActivityScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Activity Page'),
-    );
-  }
-}
-

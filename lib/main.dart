@@ -4,6 +4,8 @@ import 'package:votesecure/src/core/network/CheckNetwork.dart';
 import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/domain/repositories/CadreRepository.dart';
 import 'package:votesecure/src/domain/repositories/CandidateRepository.dart';
+import 'package:votesecure/src/domain/repositories/DetailNoticeRepository.dart';
+import 'package:votesecure/src/domain/repositories/ElectionResultDetailRepository.dart';
 import 'package:votesecure/src/domain/repositories/EnterEmailToVerify_repository.dart';
 import 'package:votesecure/src/domain/repositories/VoterRepository.dart';
 import 'package:votesecure/src/domain/repositories/Token_Repositories.dart';
@@ -39,6 +41,8 @@ Future<void> main() async{
       ChangeNotifierProvider(create: (_) => UserRepository()),
       ChangeNotifierProvider(create: (_) => CandidateRepository()),
       ChangeNotifierProvider(create: (_) => CadreRepository()),
+      ChangeNotifierProvider(create: (_) => DetailNoticeRepository()),
+      ChangeNotifierProvider(create: (_) => ElectionResultDetailRepository()),
     ],
       child:  MyApp()
     )

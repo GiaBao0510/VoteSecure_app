@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/domain/repositories/UserRepository.dart';
+import 'package:votesecure/src/presentation/pages/common/ChangePwd/ChangePwd.dart';
 import 'package:votesecure/src/presentation/pages/common/Policy/Policy_private.dart';
 import 'package:votesecure/src/presentation/pages/common/SupportInformationSubmission/SupportInformationSubmission_page.dart';
 import 'package:votesecure/src/presentation/pages/common/profile/Profile.dart';
@@ -129,6 +131,16 @@ class UserAccount extends StatelessWidget {
                   icon: Icons.info,
                   title: 'Xem hướng dẫn bỏ phiếu',
                   onTap: () {},
+                ),
+                _buildProfileOption(
+                  icon: Icons.password_rounded,
+                  title: 'Đổi mật khẩu',
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ChangePasswordPage(ID_user: user.ID_User ?? '',))
+                    );
+                  },
                 ),
                 Divider(),
                 const SizedBox(height: 30,),

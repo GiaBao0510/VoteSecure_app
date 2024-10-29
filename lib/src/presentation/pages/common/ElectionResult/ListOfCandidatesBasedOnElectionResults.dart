@@ -9,19 +9,19 @@ import 'package:votesecure/src/presentation/widgets/TitleAppBar.dart';
 import 'package:votesecure/src/presentation/widgets/searchBar.dart';
 import 'package:votesecure/src/presentation/pages/common/Introduction/CandidateIntroductionPage.dart';
 
-class ListOfCandidatesBasedOnElectionDateScreen extends StatefulWidget {
-  static const routeName = 'list-of-candidate-based-on-election';
+class ListOfCandidatesBasedOnElectionResultScreen extends StatefulWidget {
+  static const routeName = 'list-of-candidates-based-on-election-results';
   final String ngayBD;
-  const ListOfCandidatesBasedOnElectionDateScreen({
+  const ListOfCandidatesBasedOnElectionResultScreen({
     super.key,
     required this.ngayBD
   });
 
   @override
-  State<ListOfCandidatesBasedOnElectionDateScreen> createState() => _ListOfCandidatesBasedOnElectionDateScreenState(ngayBD: ngayBD);
+  State<ListOfCandidatesBasedOnElectionResultScreen> createState() => _ListOfCandidatesBasedOnElectionResultScreenState(ngayBD: ngayBD);
 }
 
-class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandidatesBasedOnElectionDateScreen> {
+class _ListOfCandidatesBasedOnElectionResultScreenState extends State<ListOfCandidatesBasedOnElectionResultScreen> {
   final CandidateRepository candidateRepository = CandidateRepository();
   final TextEditingController _searchController = TextEditingController();
   late Future<List<CandidateListBasedonElEctionDateModel>> _danhsachungcuvienFuture;
@@ -30,7 +30,7 @@ class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandid
   List<CandidateListBasedonElEctionDateModel> _danhSachUngCuVienList = [];
   final String ngayBD;
 
-  _ListOfCandidatesBasedOnElectionDateScreenState({
+  _ListOfCandidatesBasedOnElectionResultScreenState({
     required this.ngayBD
   });
 
@@ -49,25 +49,40 @@ class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandid
   }
 
   //Load danh sách bầu củ
-  Future<void> _loadData() async{
+  Future<void> _loadData() async {
     final controller = Provider.of<CandidateRepository>(context, listen: false);
-    _danhsachungcuvienFuture = controller.GetCandidateListBasedOnElectionDate(context,ngayBD);
+    _danhsachungcuvienFuture = controller.GetCandidateListBasedOnElectionDate(context, ngayBD);
     _danhsachungcuvienFuture.then((ungcuviens) {
       setState(() {
+        // Sắp xếp danh sách theo số lượt bình chọn giảm dần
+        ungcuviens.sort((a, b) =>
+            b.soLuotBinhChon.compareTo(a.soLuotBinhChon)
+        );
         _danhSachUngCuVienList = ungcuviens;
         _fillDanhSachUngCuVienList = ungcuviens;
       });
     });
   }
 
-  // Bộ lọc tìm kiếm
-  void _fillterElections(){
+  // Bộ lọc tìm kiếm với duy trì thứ tự sắp xếp
+  void _fillterElections() {
     final query = _searchController.text.toLowerCase();
     setState(() {
-      _fillDanhSachUngCuVienList = _danhSachUngCuVienList.where((ungcuvien){
-        return ungcuvien.HoTen!.toLowerCase().contains(query);
-      }).toList();
+      _fillDanhSachUngCuVienList = _danhSachUngCuVienList
+          .where((ungcuvien) =>
+      ungcuvien.HoTen?.toLowerCase().contains(query) ?? false)
+          .toList();
     });
+  }
+
+  // Helper method to check if candidate has highest votes
+  bool _isHighestVoted(int index) {
+    if (_fillDanhSachUngCuVienList.isEmpty) return false;
+    if (index != 0) return false; // Since list is sorted, first item has highest votes
+
+    // Verify that this candidate actually has the highest votes (in case of ties)
+    int currentVotes = _fillDanhSachUngCuVienList[index].soLuotBinhChon;
+    return currentVotes > 0; // Only highlight if they actually have votes
   }
 
   //Hàm hiển thi chính
@@ -75,7 +90,7 @@ class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandid
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          appBar: AppTitle(textTitle: 'Danh sách các ứng cử viên tại kỳ này'),
+          appBar: AppTitle(textTitle: 'Danh sách các ứng cử viên theo kỳ này'),
           body: Stack(
             children: [
               widgetLibraryState.buildPageBackgroundGradient2Color(context, '0xffd7d5d5','0xffe1e2df'),
@@ -84,6 +99,46 @@ class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandid
           )
       ),
     );
+  }
+
+  // Helper method to get container decoration based on vote status
+  BoxDecoration _getContainerDecoration(int index) {
+    if (_isHighestVoted(index)) {
+      return BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFD700), Color(0xFFFFA500)], // Golden gradient for highest voted
+          stops: [0, 1],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0xFFFFD700),
+            blurRadius: 10,
+            spreadRadius: 2,
+            offset: Offset(0, 0),
+          ),
+        ],
+      );
+    } else {
+      return BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        gradient: const LinearGradient(
+          colors: [Color(0xff1e3c72), Color(0xff2a5298)],
+          stops: [0, 1],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.grey,
+            blurRadius: 5,
+            offset: Offset(4, 8),
+          ),
+        ],
+      );
+    }
   }
 
   Widget _buildCandidateListBasedOnElectionDay(BuildContext context){
@@ -115,22 +170,7 @@ class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandid
                 return Stack(
                   children: [
                     Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        gradient: const LinearGradient(
-                          colors: [Color(0xff1e3c72), Color(0xff2a5298)],
-                          stops: [0, 1],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 5,
-                            offset: Offset(4, 8), // Shadow position
-                          ),
-                        ],
-                      ),
+                      decoration: _getContainerDecoration(index),
                       margin: EdgeInsets.fromLTRB(8, 15, 8, 0),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -194,40 +234,6 @@ class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandid
                                         style: TextStyle(color: Colors.white),
                                         children: [
                                           TextSpan(
-                                              text: 'Ngày sinh: ',
-                                              style: TextStyle(
-                                                  fontSize: 13, fontWeight: FontWeight.bold)),
-                                          TextSpan(
-                                              text:
-                                              '${widgetLibraryState.DateFormat2(_fillDanhSachUngCuVienList[index].NgaySinh ?? '')}',
-                                              style: TextStyle(
-                                                fontSize: 11,
-                                              )),
-                                        ],
-                                      ),
-                                    ),
-                                    RichText(
-                                      text: TextSpan(
-                                        style: TextStyle(color: Colors.white),
-                                        children: [
-                                          TextSpan(
-                                              text: 'Dân tộc: ',
-                                              style: TextStyle(
-                                                  fontSize: 13, fontWeight: FontWeight.bold)),
-                                          TextSpan(
-                                              text:
-                                              '${_fillDanhSachUngCuVienList[index].TenDanToc}',
-                                              style: TextStyle(
-                                                fontSize: 11,
-                                              )),
-                                        ],
-                                      ),
-                                    ),
-                                    RichText(
-                                      text: TextSpan(
-                                        style: TextStyle(color: Colors.white),
-                                        children: [
-                                          TextSpan(
                                               text: 'Trình độ: ',
                                               style: TextStyle(
                                                   fontSize: 13, fontWeight: FontWeight.bold)),
@@ -240,6 +246,60 @@ class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandid
                                         ],
                                       ),
                                     ),
+                                    RichText(
+                                      text: TextSpan(
+                                        style: TextStyle(color: Colors.white),
+                                        children: [
+                                          TextSpan(
+                                              text: 'Số lượt bình chọn: ',
+                                              style: TextStyle(
+                                                  fontSize: 13, fontWeight: FontWeight.bold)),
+                                          TextSpan(
+                                              text:
+                                              '${_fillDanhSachUngCuVienList[index].soLuotBinhChon}',
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                              )),
+                                        ],
+                                      ),
+                                    ),
+                                    RichText(
+                                      text: TextSpan(
+                                        style: TextStyle(color: Colors.white),
+                                        children: [
+                                          TextSpan(
+                                              text: 'Tỷ lệ bình chọn: ',
+                                              style: TextStyle(
+                                                  fontSize: 13, fontWeight: FontWeight.bold)),
+                                          TextSpan(
+                                              text:
+                                              '${_fillDanhSachUngCuVienList[index].tyLeBinhChon}',
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                              )),
+                                        ],
+                                      ),
+                                    ),
+                                    if (_isHighestVoted(index))
+                                      Container(
+                                        margin: EdgeInsets.only(top: 8),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red,
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        child: Text(
+                                          'Cao nhất',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
                                   ],
                                 ),
                               ),
@@ -267,7 +327,7 @@ class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandid
                                     ),
                                   ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
