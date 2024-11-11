@@ -9,7 +9,8 @@ class CandidateListBasedonElEctionDateModel{
   NgaySinh,
   GioiThieu,
   tenTrinhDoHocVan;
-  final int soLuotBinhChon, tyLeBinhChon;
+  final int soLuotBinhChon;
+  final double tyLeBinhChon;
   bool IsSelected;
 
   //Ham nhập
@@ -37,7 +38,7 @@ class CandidateListBasedonElEctionDateModel{
     String? HinhAnh,
     String? TenDanToc,
     String? GioiThieu,
-    int? tyLeBinhChon,
+    double? tyLeBinhChon,
     String? NgaySinh,
     String? tenTrinhDoHocVan,
     bool? IsSelected
@@ -81,11 +82,11 @@ class CandidateListBasedonElEctionDateModel{
         GioiTinh: map['gioiTinh'] ?? 'null',
         TrangThai: map['trangThai'] ?? 'null',
         Email: map['email'] ?? 'null',
-        soLuotBinhChon: map['soLuotBinhChon'] ?? 'null',
+        soLuotBinhChon: map['soLuotBinhChon'] ?? 0,
         HinhAnh: map['hinhAnh'] ?? 'null',
         TenDanToc: map['tenDanToc'] ?? 'null',
         NgaySinh: map['ngaySinh'],
-        tyLeBinhChon: map['tyLeBinhChon'] ?? 'null',
+        tyLeBinhChon: map['tyLeBinhChon'] ?? 0.0,
         IsSelected: false,
         tenTrinhDoHocVan: map['tenTrinhDoHocVan'] ?? 'null',
         GioiThieu: map['gioiThieu'] ?? 'null',

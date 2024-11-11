@@ -30,7 +30,7 @@ class ServerHealthCheck {
         headers:  {'X-Health-Check': 'true'}
       ).timeout(const Duration(seconds: 5));
 
-      print('path: $CheckConnectServer');
+      print('>> path: $CheckConnectServer');
 
       _lastCheckResult = res.statusCode == 200;
       _lastCheckTime = DateTime.now();

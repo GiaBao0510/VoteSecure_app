@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/domain/repositories/UserRepository.dart';
+import 'dart:ui';
 
 class EditProfilePage extends StatefulWidget {
   final ProfileModel user;
@@ -131,207 +132,435 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xff7777ee), Color(0xff348ac7)],
-              stops: [0, 1],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      backgroundColor: Colors.grey[100],
+      body: Stack(
+        children: [
+          // Background gradient
+          Container(
+            height: 280,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF6B8EFF),
+                  Color(0xFF0039CB),
+                ],
+              ),
             ),
           ),
-        ),
-        title: Text('Chỉnh sửa hồ sơ', style: TextStyle(color: Colors.white,fontSize: 25),),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back,color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
+
+          // Main content
+          SafeArea(
+            child: Column(
+              children: [
+                // Custom AppBar
+                buildAppBar(),
+
+                // Scrollable content
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+                    child: Container(
+                      color: Colors.grey[100],
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            // Profile Image Section
+                            Transform.translate(
+                              offset: Offset(0, -50),
+                              child: buildProfileImageSection(),
+                            ),
+
+                            // Profile Content
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+                              child: buildProfileContent(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildAppBar() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: Icon(Icons.arrow_back_ios_new, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+          Text(
+            'Chỉnh sửa thông tin',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           if (isEditing)
             IconButton(
-              icon: Icon(Icons.check, color: Colors.white, size: 25,),
+              icon: Icon(Icons.check, color: Colors.white),
               onPressed: saveChanges,
-            ),
-          if (!isEditing)
+            )
+          else
             IconButton(
               icon: Icon(Icons.edit, color: Colors.white),
               onPressed: toggleEditing,
             ),
         ],
       ),
-      body: Stack(children: [
-        widgetlibraryState.buildPageBackgroundGradient2Color(context, '0xfff5f5f5', '0xffd6d6d6'),
-        buildUserInformationForm(context),
-      ],)
     );
   }
 
-  // Xây dựng phần biểu mẫu thông tin cá nhân
-  Widget buildUserInformationForm(BuildContext context){
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundImage: NetworkImage(user.HinhAnh ?? ''),
-                  ),
-                  if (isEditing)
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.grey[200],
-                        child: Icon(Icons.camera_alt, color: Colors.black),
-                      ),
+  Widget buildProfileImageSection() {
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 20,
+                offset: Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              Container(
+                margin:  const EdgeInsets.only(top: 60.0),
+                child: CircleAvatar(
+                  radius: 60,
+                  backgroundColor: Colors.white,
+                  backgroundImage: NetworkImage(user.HinhAnh ?? ''),
+                ),
+              ),
+              if (isEditing)
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 8,
+                        ),
+                      ],
                     ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Thông tin cá nhân',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            TextFormField(
+                    child: Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        SizedBox(height: 16),
+        Text(
+          user.HoTen ?? '',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildProfileContent() {
+    return Column(
+      children: [
+        buildInfoCard(
+          title: 'Thông tin cá nhân',
+          children: [
+            buildTextField(
               controller: fullNameController,
-              decoration: InputDecoration(
-                  labelText: 'Họ tên',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              label: 'Họ tên',
+              icon: Icons.person_outline,
               enabled: isEditing,
             ),
-            SizedBox(height: 8),
-            TextFormField(
-              controller: AddressController,
-              decoration: InputDecoration(
-                labelText: 'Địa chỉ',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              enabled: isEditing,
-            ),
-            SizedBox(height: 8),
-            TextFormField(
-              controller: phoneController,
-              decoration: InputDecoration(
-                labelText: 'Số điện thoại',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              enabled: isEditing,
-              keyboardType: TextInputType.phone,
-            ),
-            SizedBox(height: 8),
-            TextFormField(
+            SizedBox(height: 16),
+            buildTextField(
               controller: emailController,
-              decoration: InputDecoration(
-                  labelText: 'Email',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
+              label: 'Email',
+              icon: Icons.email_outlined,
               enabled: isEditing,
               keyboardType: TextInputType.emailAddress,
             ),
-            SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              value: GioiTinh == '1' ? 'Nam': 'Nữ',
-              items: ['Nam', 'Nữ', 'Khác']
-                  .map((label) => DropdownMenuItem(
-                child: Text(label),
-                value: label,
-              ))
-                  .toList(),
-              onChanged: isEditing ? (value) => setState(() => GioiTinh = value!) : null,
-              decoration: InputDecoration(
-                  labelText: 'Giới tính',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              disabledHint: Text(GioiTinh),
+          ],
+        ),
+
+        SizedBox(height: 16),
+
+        buildInfoCard(
+          title: 'Thông tin liên hệ',
+          children: [
+            buildTextField(
+              controller: phoneController,
+              label: 'Số điện thoại',
+              icon: Icons.phone_outlined,
+              enabled: isEditing,
+              keyboardType: TextInputType.phone,
             ),
             SizedBox(height: 16),
-            TextFormField(
-              readOnly: true,
+            buildTextField(
+              controller: AddressController,
+              label: 'Địa chỉ',
+              icon: Icons.location_on_outlined,
               enabled: isEditing,
-              controller: TextEditingController(
-                  text: TenDanToc ?? 'Chọn dân tộc'),
-              onTap: () => _showDanTocPicker(context),
-              decoration: InputDecoration(
-                labelText: 'Dân tộc',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
             ),
-            SizedBox(height: 20),
-            TextFormField(
+          ],
+        ),
+
+        SizedBox(height: 16),
+
+        buildInfoCard(
+          title: 'Thông tin bổ sung',
+          children: [
+            buildDropdownField(
+              value: GioiTinh == '1' ? 'Nam' : 'Nữ',
+              label: 'Giới tính',
+              icon: Icons.person_outline,
+              items: ['Nam', 'Nữ', 'Khác'],
+              onChanged: isEditing ? (value) => setState(() => GioiTinh = value!) : null,
+            ),
+            SizedBox(height: 16),
+            buildTextField(
+              controller: TextEditingController(text: TenDanToc ?? 'Chọn dân tộc'),
+              label: 'Dân tộc',
+              icon: Icons.people_outline,
               enabled: isEditing,
               readOnly: true,
+              onTap: () => _showDanTocPicker(context),
+            ),
+            SizedBox(height: 16),
+            buildTextField(
               controller: TextEditingController(
                 text: _selectedDate != null
                     ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
                     : 'Chọn ngày sinh',
               ),
+              label: 'Ngày sinh',
+              icon: Icons.calendar_today_outlined,
+              enabled: isEditing,
+              readOnly: true,
               onTap: () => _selectDate(context),
-              decoration: InputDecoration(
-                labelText: 'Ngày sinh',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
+            ),
+          ],
+        ),
+
+        if (isEditing) ...[
+          SizedBox(height: 24),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: ElevatedButton(
+              onPressed: toggleEditing,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                padding: EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            SizedBox(height: 25),
-            if (isEditing)
-              SizedBox(height: 16),
-            if (isEditing)
-              ElevatedButton(
-                onPressed: toggleEditing,
-                child: Text('Cancel'),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              ),
-          ],
-        ),
+          ),
+        ],
+
+        SizedBox(height: 32),
+      ],
+    );
+  }
+
+  Widget buildInfoCard({
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+          SizedBox(height: 16),
+          ...children,
+        ],
       ),
     );
   }
 
-  // Hiển thị modal bottom sheet với danh sách dân tộc
+  Widget buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool enabled = true,
+    bool readOnly = false,
+    VoidCallback? onTap,
+    TextInputType? keyboardType,
+  }) {
+    return TextFormField(
+      controller: controller,
+      enabled: enabled,
+      readOnly: readOnly,
+      onTap: onTap,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: Theme.of(context).primaryColor),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Colors.grey.shade300,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Colors.grey.shade300,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        filled: true,
+        fillColor: enabled ? Colors.white : Colors.grey.shade100,
+      ),
+    );
+  }
+
+  Widget buildDropdownField({
+    required String value,
+    required String label,
+    required IconData icon,
+    required List<String> items,
+    required ValueChanged<String?>? onChanged,
+  }) {
+    return DropdownButtonFormField<String>(
+      value: value,
+      items: items
+          .map((label) => DropdownMenuItem(
+        value: label,
+        child: Text(label),
+      ))
+          .toList(),
+      onChanged: onChanged,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: Theme.of(context).primaryColor),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Colors.grey.shade300,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Colors.grey.shade300,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+        filled: true,
+        fillColor: onChanged != null ? Colors.white : Colors.grey.shade100,
+      ),
+    );
+  }
+
+  // Keep the original _showDanTocPicker implementation but update its style
   void _showDanTocPicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) {
-        return ListView.builder(
-          itemCount: danTocMap.length,
-          itemBuilder: (context, index) {
-            int key = danTocMap.keys.elementAt(index);
-            return ListTile(
-              title: Text(danTocMap[key]!),
-              onTap: () {
-                setState(() {
-                  ID_DanToc = key;
-                  TenDanToc = danTocMap[key];
-                });
-                Navigator.pop(context);
-              },
-            );
-          },
+        return Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                'Select Ethnicity',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Divider(),
+            Expanded(
+              child: ListView.builder(
+                itemCount: danTocMap.length,
+                itemBuilder: (context, index) {
+                  int key = danTocMap.keys.elementAt(index);
+                  return ListTile(
+                    title: Text(danTocMap[key]!),
+                    trailing: ID_DanToc == key
+                        ? Icon(Icons.check, color: Theme.of(context).primaryColor)
+                        : null,
+                    onTap: () {
+                      setState(() {
+                        ID_DanToc = key;
+                        TenDanToc = danTocMap[key];
+                      });
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
         );
       },
     );

@@ -310,5 +310,78 @@ class UserRepository with ChangeNotifier{
     }
   }
 
+  //Đếm số lượng cuộc bầu cử đa tham dự trong tương lai
+  Future<int> CountTheNumberOfElections_VoterWillVote_Future(String ID_CuTri) async{
+    try{
+      final accessToken = await _tokenRepository.getAccessToken();
+      String uri = countTheNumberOfElections_VoterWillVote_Future+ID_CuTri;
+      print('path: ${uri}');
+
+      var res = await http.get(
+          Uri.parse(uri),
+          headers: {
+            'content-type':'application/json',
+            'Accept': 'application/json',
+            "Authorization": "Bearer $accessToken",
+          },
+      );
+
+      final thongTinPhanHoi = jsonDecode(res.body);
+
+      if(res.statusCode == 200){
+        return thongTinPhanHoi['data']['count'];
+      }else {
+        throw Exception(
+            'Failed to load data. Status code: ${res.statusCode}');
+      }
+    }catch (e) {
+      if (e is SocketException) {
+        throw Exception('No internet connection: ${e.message}');
+      } else if (e is HttpException) {
+        throw Exception('HTTP error: ${e.message}');
+      } else if (e is FormatException) {
+        throw Exception('Bad response format: ${e.message}');
+      } else {
+        throw Exception('Error occurred while fetching data: $e');
+      }
+    }
+  }
+
+  //Đếm số lượng cuộc bầu cử đa tham dự
+  Future<int> CountTheNumberOfElections_VotersParticipated(String ID_CuTri) async{
+    try{
+      final accessToken = await _tokenRepository.getAccessToken();
+      String uri = countTheNumberOfElections_VotersParticipated+ID_CuTri;
+      print('path: ${uri}');
+
+      var res = await http.get(
+        Uri.parse(uri),
+        headers: {
+          'content-type':'application/json',
+          'Accept': 'application/json',
+          "Authorization": "Bearer $accessToken",
+        },
+      );
+
+      final thongTinPhanHoi = jsonDecode(res.body);
+
+      if(res.statusCode == 200){
+        return thongTinPhanHoi['data']['count'];
+      }else {
+        throw Exception(
+            'Failed to load data. Status code: ${res.statusCode}');
+      }
+    }catch (e) {
+      if (e is SocketException) {
+        throw Exception('No internet connection: ${e.message}');
+      } else if (e is HttpException) {
+        throw Exception('HTTP error: ${e.message}');
+      } else if (e is FormatException) {
+        throw Exception('Bad response format: ${e.message}');
+      } else {
+        throw Exception('Error occurred while fetching data: $e');
+      }
+    }
+  }
 
 }

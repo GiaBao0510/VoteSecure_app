@@ -155,12 +155,14 @@ class CadreRepository with ChangeNotifier{
   }
 
   //4.công bố kết quả
-  Future<void> AnnounceElectionResults(BuildContext context, String ngayBD) async{
+  Future<void> AnnounceElectionResults(BuildContext context, String ngayBD, String ID_CanBo) async{
     try{
       final accessToken = await _tokenRepository.getAccessToken();
       ngayBD = ngayBD.replaceAll('T', ' ');
-      String uri = announceElectionResults+ngayBD;
+      String uri = announceElectionResults;
       print('Path: ${uri}');
+      print('Can bộ công bố: $ID_CanBo');
+      print('Ky bau cu: $ngayBD');
 
       // Hiển thị dialog chờ đợi
       widgetlibraryState.buildingAwaitingFeedback_2(context);
@@ -170,7 +172,11 @@ class CadreRepository with ChangeNotifier{
           headers: {
             "Content-Type":"application/json",
             "Authorization": "Bearer $accessToken",
-          }
+          },
+        body: jsonEncode({
+          "ngayBD": ngayBD,
+          "ID_CanBo": ID_CanBo
+        })
       );
 
       // Đóng dialog sau khi có phản hồi từ server

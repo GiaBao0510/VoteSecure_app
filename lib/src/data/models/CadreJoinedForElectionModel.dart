@@ -76,9 +76,9 @@ class CadreJoinedForElectionModel{
       ngayBD: map['ngayBD'] ?? 'null',
       ngayKT: map['ngayKT'] ?? 'null',
       CongBo: map['congBo'] ?? 'null',
-      SoLuongToiDaCuTri: map['soLuongToiDaCuTri'] ?? 0,
-      SoLuongToiDaUngCuVien: map['soLuongToiDaUngCuVien'] ?? 0,
-      SoLuotBinhChonToiDa: map['soLuotBinhChonToiDa'] ?? 0,
+      SoLuongToiDaCuTri: map['soLuongToiDaCuTri'] is double ? map['soLuongToiDaCuTri'].toInt() : map['soLuongToiDaCuTri'] ?? 0,
+      SoLuongToiDaUngCuVien: map['soLuongToiDaUngCuVien'] is double ? map['soLuongToiDaUngCuVien'].toInt() : map['soLuongToiDaUngCuVien'] ?? 0,
+      SoLuotBinhChonToiDa: map['soLuotBinhChonToiDa'] is double ? map['soLuotBinhChonToiDa'].toInt() : map['soLuotBinhChonToiDa'] ?? 0,
     );
   }
 }

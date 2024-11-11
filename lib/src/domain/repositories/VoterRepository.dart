@@ -206,7 +206,7 @@ class VoterRepository with ChangeNotifier{
         QuickAlert.show(
             context: context,
             type: QuickAlertType.error,
-            title: "Lỗi khi thực hiện ửi phiếu",
+            title: "Lỗi khi thực hiện gửi phiếu",
             text: message
         );
         return false;

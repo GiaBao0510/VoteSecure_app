@@ -27,9 +27,6 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
   List<CadreJoinedForElectionModel> _fillDanhSachBauCuList = [];
   List<CadreJoinedForElectionModel> _danhSachBauCuList = [];
   WidgetlibraryState widgetLibraryState = WidgetlibraryState();
-  Color TextColorInItem = Colors.white;
-  Color BgColorInItem = Colors.indigo;
-  List<Color>  BackGroundColorInItem = [Color(0xff1e3c72), Color(0xff2a5298)];
 
   _ListOfCadreJoinedForElectionState({required this.ID_CanBo});
 
@@ -66,6 +63,23 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
         return kybaucu.tenCapUngCu!.toLowerCase().contains(query);
       }).toList();
     });
+  }
+
+  // Hàm lấy màu sắc dựa trên trạng thái công bố
+  Map<String, dynamic> _getItemColors(String congBo) {
+    if (congBo == "1") {
+      return {
+        'textColor': Colors.black87,
+        'bgColor': Color(0xffe65c00),
+        'gradientColors': [Color(0xffe65c00), Color(0xfff9d423)],
+      };
+    } else {
+      return {
+        'textColor': Colors.white,
+        'bgColor': Colors.indigo,
+        'gradientColors': [Color(0xff1e3c72), Color(0xff2a5298)],
+      };
+    }
   }
 
   @override
@@ -111,19 +125,18 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
                 physics: AlwaysScrollableScrollPhysics(),
                 itemBuilder: (BuildContext context, int index){
 
-                  //Đổi màu chữ và nền dựa trên công bố kq
-                  if(_fillDanhSachBauCuList[index].CongBo == "1"){
-                    TextColorInItem = Colors.black87;
-                    BgColorInItem = Color(0xffe65c00);
-                    BackGroundColorInItem = [Color(0xffe65c00), Color(0xfff9d423)];
-                  }
+                  // Lấy màu sắc cho từng item riêng biệt
+                  final itemColors = _getItemColors(_fillDanhSachBauCuList[index].CongBo ?? '0');
+                  final textColor = itemColors['textColor'];
+                  final bgColor = itemColors['bgColor'];
+                  final gradientColors = itemColors['gradientColors'];
 
                   return Container(
                     margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15.0),
                       gradient:LinearGradient(
-                        colors: BackGroundColorInItem,
+                        colors: gradientColors,
                         stops: [0, 1],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -146,7 +159,7 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
                                 child: Icon(
                                   Icons.people_alt_outlined,
                                   size: 55,
-                                  color: TextColorInItem,  ),
+                                  color: textColor,  ),
                               ),
                               const SizedBox(width: 10,),
                               Flexible(
@@ -160,7 +173,7 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
                                           const TextSpan(text: 'Tên kỳ bầu cử: ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
                                           TextSpan(text: '${_fillDanhSachBauCuList[index].tenKyBauCu}')
                                         ],
-                                          style: TextStyle(color: TextColorInItem,),),
+                                          style: TextStyle(color: textColor,),),
                                         textAlign: TextAlign.left,
                                       ),
                                     ),
@@ -171,7 +184,7 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
                                           const TextSpan(text: 'Tên đơn vị: ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
                                           TextSpan(text: '${_fillDanhSachBauCuList[index].tenDonViBauCu}')
                                         ],
-                                          style: TextStyle(color: TextColorInItem,),),
+                                          style: TextStyle(color: textColor,),),
                                         textAlign: TextAlign.left,
                                       ),
                                     ),
@@ -191,13 +204,13 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
                                       text: TextSpan(children: [
                                         const TextSpan(text: 'Tên cấp ứng củ: ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
                                         TextSpan(text: '${_fillDanhSachBauCuList[index].tenCapUngCu ?? 'null' }')
-                                      ], style: TextStyle(color: TextColorInItem))
+                                      ], style: TextStyle(color: textColor))
                                   ),
                                   RichText(
                                       text: TextSpan(children: [
                                         const TextSpan(text: 'Số lượng ứng cử viên: ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
                                         TextSpan(text: '${_fillDanhSachBauCuList[index].SoLuongToiDaUngCuVien}')
-                                      ], style: TextStyle(color: TextColorInItem))
+                                      ], style: TextStyle(color: textColor))
                                   ),
                                 ],
                               ),
@@ -211,21 +224,21 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
                                       text: TextSpan(children: [
                                         const TextSpan(text: 'Ngày bắt đầu: ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
                                         TextSpan(text: '${widgetLibraryState.DateTimeFormat(_fillDanhSachBauCuList[index].ngayBD ?? 'null') }')
-                                      ], style: TextStyle(color: TextColorInItem)),
+                                      ], style: TextStyle(color: textColor)),
                                     textAlign: TextAlign.left,
                                   ),
                                   RichText(
                                       text: TextSpan(children: [
                                         const TextSpan(text: 'Ngày kết thúc: ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
                                         TextSpan(text: '${widgetLibraryState.DateTimeFormat(_fillDanhSachBauCuList[index].ngayKT ?? 'null') }')
-                                      ], style: TextStyle(color: TextColorInItem)),
+                                      ], style: TextStyle(color: textColor)),
                                     textAlign: TextAlign.left,
                                   ),
                                   RichText(
                                       text: TextSpan(children: [
                                         const TextSpan(text: 'Công bố kết quả: ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
                                         TextSpan(text: '${_fillDanhSachBauCuList[index].CongBo == "1"? 'Rồi':'Chưa ' }')
-                                      ], style: TextStyle(color: TextColorInItem)),
+                                      ], style: TextStyle(color: textColor)),
                                     textAlign: TextAlign.left,
                                   ),
                                 ],
@@ -248,6 +261,10 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
 
   //Xây dựng phần nút chuyển trang
   Widget _buildNavigationButtonSection(BuildContext content, int index){
+    final itemColors = _getItemColors(_fillDanhSachBauCuList[index].CongBo ?? '0');
+    final textColor = itemColors['textColor'];
+    final bgColor = itemColors['bgColor'];
+
     return Row(children: [
       Expanded(
         flex: 1,
@@ -264,12 +281,12 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
                     child: Icon(Icons.people_alt_sharp, size: 20),
                   ),
                   const TextSpan(text: ' Danh sách ứng cử viên ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13))
-                ], style: TextStyle(color: BgColorInItem)),
+                ], style: TextStyle(color: bgColor)),
               textAlign: TextAlign.center,
             ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: TextColorInItem,
-            foregroundColor: BgColorInItem,
+            backgroundColor: textColor,
+            foregroundColor: bgColor,
           ),
         ),
       ),
@@ -280,7 +297,12 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
           onPressed: (){
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DetailedListOfVotesBasedOnTheElection(ngayBD: _fillDanhSachBauCuList[index].ngayBD ?? '',cadreJoinedForElectionModel: _fillDanhSachBauCuList[index], ))
+                MaterialPageRoute(builder: (context) =>
+                    DetailedListOfVotesBasedOnTheElection(
+                      ngayBD: _fillDanhSachBauCuList[index].ngayBD ?? '',
+                      ID_CanBo: ID_CanBo,
+                      cadreJoinedForElectionModel: _fillDanhSachBauCuList[index], )
+                    )
             );
           },
           child: RichText(
@@ -289,12 +311,12 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
                 child: Icon(Icons.how_to_vote_outlined, size: 20),
               ),
               const TextSpan(text: ' Danh sách phiếu bầu ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13))
-            ], style: TextStyle(color: BgColorInItem)),
+            ], style: TextStyle(color: bgColor)),
             textAlign: TextAlign.center,
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: TextColorInItem,
-            foregroundColor: BgColorInItem,
+            backgroundColor: textColor,
+            foregroundColor: bgColor,
           ),
         ),
       ),

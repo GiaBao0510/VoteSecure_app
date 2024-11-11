@@ -14,15 +14,17 @@ import 'package:votesecure/src/presentation/widgets/searchBar.dart';
 class DetailedListOfVotesBasedOnTheElection extends StatefulWidget {
   static const routeName = 'detailed-list-of-votes-based-on-the-election';
   final String ngayBD;
+  final String ID_CanBo;
   final CadreJoinedForElectionModel cadreJoinedForElectionModel;
   const DetailedListOfVotesBasedOnTheElection({
     super.key, 
     required this.ngayBD,
+    required this.ID_CanBo,
     required this.cadreJoinedForElectionModel
   });
 
   @override
-  State<DetailedListOfVotesBasedOnTheElection> createState() => _DetailedListOfVotesBasedOnTheElectionState(ngayBD: ngayBD, cadreJoinedForElectionModel: cadreJoinedForElectionModel);
+  State<DetailedListOfVotesBasedOnTheElection> createState() => _DetailedListOfVotesBasedOnTheElectionState(ngayBD: ngayBD, ID_CanBo: ID_CanBo,cadreJoinedForElectionModel: cadreJoinedForElectionModel);
 }
 
 // Thêm enum để quản lý trạng thái hiển thị
@@ -32,7 +34,7 @@ enum VoteDisplayMode {
 }
 
 class _DetailedListOfVotesBasedOnTheElectionState extends State<DetailedListOfVotesBasedOnTheElection> {
-  final String ngayBD;
+  final String ngayBD, ID_CanBo;
   final CadreJoinedForElectionModel cadreJoinedForElectionModel;
   final CadreRepository cadreRepository = CadreRepository();
   final TextEditingController _searchController = TextEditingController();
@@ -50,6 +52,7 @@ class _DetailedListOfVotesBasedOnTheElectionState extends State<DetailedListOfVo
 
   _DetailedListOfVotesBasedOnTheElectionState({
     required this.ngayBD,
+    required this.ID_CanBo,
     required this.cadreJoinedForElectionModel
   });
 
@@ -610,7 +613,7 @@ class _DetailedListOfVotesBasedOnTheElectionState extends State<DetailedListOfVo
                 text: 'Vì số lượng phiếu bầu chua có nên không thể công bố kết quả'
             );
           }else{
-            await cadreRepository.AnnounceElectionResults(context, ngayBD);
+            await cadreRepository.AnnounceElectionResults(context, ngayBD, ID_CanBo);
           }
         }, 
         child: Container(

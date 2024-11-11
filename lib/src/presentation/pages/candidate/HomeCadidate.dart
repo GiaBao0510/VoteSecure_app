@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:lottie/lottie.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:votesecure/src/config/AppConfig_api.dart';
-import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/domain/repositories/UserRepository.dart';
 import 'package:votesecure/src/presentation/pages/candidate/ListOfRegisteredCandidate.dart';
@@ -17,6 +17,7 @@ import 'package:votesecure/src/presentation/widgets/TitleAppBarForHomePage.dart'
 class Homecadidate extends StatefulWidget {
   final ProfileModel user;
   static const routeName = "/homecandidate";
+
   const Homecadidate({
     super.key,
     required this.user
@@ -27,7 +28,6 @@ class Homecadidate extends StatefulWidget {
 }
 
 class _HomecadidateState extends State<Homecadidate> {
-  //Thuộc tính
   final UserRepository userRepository = UserRepository();
   int _selectedIndex = 0;
   late List<Widget> _pages;
@@ -36,60 +36,103 @@ class _HomecadidateState extends State<Homecadidate> {
 
   _HomecadidateState({required this.user});
 
-  //hàm khởi tạo
   @override
   void initState() {
     super.initState();
     _pages = [
-      HomeScreen(ID_object: user.ID_Object ?? '',),
-      AnnouncementScreen(ID_object: user.ID_Object ?? '',),
-      UserAccount(user: user,uri: candidateSendContactUs),
+      HomeScreen(ID_object: user.ID_Object ?? ''),
+      AnnouncementScreen(ID_object: user.ID_Object ?? ''),
+      UserAccount(user: user, uri: candidateSendContactUs),
     ];
     Email = user.Email ?? 'null';
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh:  () async{
-        print('làm mới nhe: $Email');
-        await userRepository.GetProfileUserBasedOnUserEmail(context, user, Email);
-      },
-      child: SafeArea(
-          child: Scaffold(
-            appBar: AppTitleHomePage(user: user,),
-            body: _pages[_selectedIndex],
-            bottomNavigationBar: BottomNavigationBar(
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Trang chủ',
+    return Scaffold(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await userRepository.GetProfileUserBasedOnUserEmail(context, user, Email);
+        },
+        child: SafeArea(
+          child: Stack(
+            children: [
+              // Gradient background
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF2196F3),
+                      Color(0xFF1565C0),
+                    ],
+                  ),
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.notifications),
-                  label: 'Thông báo',
+              ),
+              Scaffold(
+                backgroundColor: Colors.transparent,
+                appBar: AppTitleHomePage(user: user,),
+                body: IndexedStack(
+                  index: _selectedIndex,
+                  children: _pages,
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.account_circle),
-                  label: 'Tài khoản',
+                bottomNavigationBar: Theme(
+                  data: Theme.of(context).copyWith(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                      child: BottomNavigationBar(
+                        items: [
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.home_outlined),
+                            activeIcon: Icon(Icons.home),
+                            label: 'Trang chủ',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.notifications_outlined),
+                            activeIcon: Icon(Icons.notifications),
+                            label: 'Thông báo',
+                          ),
+                          BottomNavigationBarItem(
+                            icon: Icon(Icons.person_outline),
+                            activeIcon: Icon(Icons.person),
+                            label: 'Tài khoản',
+                          ),
+                        ],
+                        currentIndex: _selectedIndex,
+                        selectedItemColor: Color(0xFF1565C0),
+                        unselectedItemColor: Colors.grey,
+                        showUnselectedLabels: true,
+                        backgroundColor: Colors.white,
+                        elevation: 0,
+                        onTap: (index) => setState(() => _selectedIndex = index),
+                      ),
+                    ),
+                  ),
                 ),
-              ],
-              currentIndex: _selectedIndex,
-              selectedItemColor: Colors.blue,
-              onTap: _onItemTapped,
-            ),
-          )
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -97,197 +140,222 @@ class _HomecadidateState extends State<Homecadidate> {
 
 class HomeScreen extends StatelessWidget {
   final String ID_object;
-  WidgetlibraryState widgetlibraryState = WidgetlibraryState();
-  
+
   HomeScreen({
     super.key,
     required this.ID_object,
   });
 
+  // Di chuyển menuOptions vào bên trong phương thức build
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      widgetlibraryState.buildPageBackgroundGradient2Color(context, '0xff40aae7', '0xff2843e2'),
-      builHomeScreenForVoter(context)
-    ],);
-  }
-
-  Widget builHomeScreenForVoter(BuildContext context){
-    return Container(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 30,),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  gradient: LinearGradient(
-                    colors: [Color(0xfff3f1f1), Color(0xffffffff)],
-                    stops: [0, 1],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: FractionallySizedBox(
-                  child: Lottie.asset(
-                      'assets/animations/candidate.json',
-                      repeat: true,
-                      fit: BoxFit.contain,
-                      height: 250,
-                      width: double.infinity
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30,),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  gradient: LinearGradient(
-                    colors: [Color(0xfff3f1f1), Color(0xffffffff)],
-                    stops: [0, 1],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                height: 300,
-                padding: const EdgeInsets.fromLTRB(10, 20, 10, 20),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                            child: widgetlibraryState.buildMenuItem(context,'Lịch bầu cử', Icons.calendar_month_outlined, ElectioncalenderScreen.routeName)
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => ListofRegisteredCandidateScreen(ID_ucv: ID_object))
-                              );
-                            },
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Container(
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [Color(0xff44a4fd), Color(0xff3f5efb)],
-                                          stops: [0.25, 0.75],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                        borderRadius: BorderRadius.circular(10)
-                                    ),
-                                    height: 50,
-                                    width: 50,
-                                    child: Icon(Icons.list_alt, size: 40,color: Colors.white,)
-                                ),
-                                SizedBox(height: 8),
-                                FittedBox(
-                                    fit: BoxFit.fitWidth,
-                                    child: Text(
-                                      'Danh sách \nkỳ bầu cử \nđã ghi danh ', style: TextStyle(fontSize: 15),
-                                      textAlign: TextAlign.center,
-                                    )
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              print("ID_object: $ID_object - urí: $candidateSendContactUs");
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => FeedbackPage(IDSender: ID_object,uri: candidateSendContactUs,))
-                              );
-                            },
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Container(
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [Color(0xff44a4fd), Color(0xff3f5efb)],
-                                          stops: [0.25, 0.75],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                        borderRadius: BorderRadius.circular(10)
-                                    ),
-                                    height: 50,
-                                    width: 50,
-                                    child: Icon(Icons.send_rounded, size: 40,color: Colors.white,)
-                                ),
-                                SizedBox(height: 8),
-                                FittedBox(
-                                    fit: BoxFit.fitWidth,
-                                    child: Text(
-                                      'Gửi thông tin \nliên hệ', style: TextStyle(fontSize: 15),
-                                      textAlign: TextAlign.center,
-                                    )
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15,),
-                    Row(
-                      children: [
-                        //Xem kết qua bầu cử
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              print("ID_object: $ID_object - urí: $candidateSendContactUs");
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => ElectionResultScreen(ID_obj: ID_object,))
-                              );
-                            },
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Container(
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          colors: [Color(0xff44a4fd), Color(0xff3f5efb)],
-                                          stops: [0.25, 0.75],
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                        ),
-                                        borderRadius: BorderRadius.circular(10)
-                                    ),
-                                    height: 50,
-                                    width: 50,
-                                    child: Icon(CupertinoIcons.list_bullet_below_rectangle, size: 40,color: Colors.white,)
-                                ),
-                                SizedBox(height: 8),
-                                FittedBox(
-                                    fit: BoxFit.fitWidth,
-                                    child: Text(
-                                      'Kết quả \nbầu cử', style: TextStyle(fontSize: 15),
-                                      textAlign: TextAlign.center,
-                                    )
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 30,),
-            ],
+    // Khởi tạo menuOptions ở đây để có thể truy cập ID_object
+    final List<MenuOption> menuOptions = [
+      MenuOption(
+        title: 'Lịch bầu cử',
+        icon: Icons.calendar_month_outlined,
+        route: ElectioncalenderScreen.routeName,
+        gradient: [Color(0xFF4CAF50), Color(0xFF388E3C)],
+      ),
+      MenuOption(
+        title: 'Danh sách\nkỳ bầu cử',
+        icon: Icons.list_alt,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ListofRegisteredCandidateScreen(ID_ucv: ID_object),
           ),
+        ),
+        gradient: [Color(0xFFFFA726), Color(0xFFF57C00)],
+      ),
+      MenuOption(
+        title: 'Gửi thông tin\nliên hệ',
+        icon: Icons.send_rounded,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FeedbackPage(
+              IDSender: ID_object,
+              uri: candidateSendContactUs,
+            ),
+          ),
+        ),
+        gradient: [Color(0xFF26C6DA), Color(0xFF0097A7)],
+      ),
+      MenuOption(
+        title: 'Kết quả\nbầu cử',
+        icon: CupertinoIcons.list_bullet_below_rectangle,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ElectionResultScreen(ID_obj: ID_object),
+          ),
+        ),
+        gradient: [Color(0xFFEC407A), Color(0xFFC2185B)],
+      ),
+    ];
+
+    return SingleChildScrollView(
+      physics: BouncingScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 20),
+            // Welcome Card
+            Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Chào mừng đến với hệ thống',
+                    style: GoogleFonts.roboto(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Bầu cử điện tử',
+                    style: GoogleFonts.roboto(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1565C0),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+            // Animation
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Lottie.asset(
+                  'assets/animations/candidate.json',
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            // Menu Grid
+            GridView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 1.1,
+              ),
+              itemCount: menuOptions.length,
+              itemBuilder: (context, index) {
+                final option = menuOptions[index];
+                return MenuCard(option: option);
+              },
+            ),
+            SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MenuOption {
+  final String title;
+  final IconData icon;
+  final String? route;
+  final Function()? onTap;  // Thay đổi kiểu của onTap
+  final List<Color> gradient;
+
+  MenuOption({
+    required this.title,
+    required this.icon,
+    this.route,
+    this.onTap,
+    required this.gradient,
+  });
+}
+
+class MenuCard extends StatelessWidget {
+  final MenuOption option;
+
+  const MenuCard({
+    super.key,
+    required this.option,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        if (option.route != null) {
+          Navigator.pushNamed(context, option.route!);
+        } else if (option.onTap != null) {
+          option.onTap!();  // Gọi trực tiếp onTap
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            colors: option.gradient,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: option.gradient[0].withOpacity(0.3),
+              blurRadius: 8,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              option.icon,
+              size: 40,
+              color: Colors.white,
+            ),
+            SizedBox(height: 12),
+            Text(
+              option.title,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.roboto(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       ),
     );

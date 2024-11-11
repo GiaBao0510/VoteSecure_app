@@ -81,7 +81,7 @@ class MyApp extends StatelessWidget {
     switch(Logined){
       case -1: return loginPages();
       case 2: return Homecadidate(user: HoSoNguoiDung,);
-      case 5: return homeVoter(user:HoSoNguoiDung,);
+      case 5: return HomeVoter(user:HoSoNguoiDung,);
       case 8: return HomeCadre(user:HoSoNguoiDung);
       default: return loginPages();
     }

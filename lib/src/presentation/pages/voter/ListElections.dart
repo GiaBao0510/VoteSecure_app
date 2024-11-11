@@ -31,10 +31,6 @@ class _ListElectionsScreenState extends State<ListElectionsScreen> {
 
   _ListElectionsScreenState({required this.ID_object});
 
-  //Màu cho từng mục
-  Color TextColorInItem = Colors.white;
-  List<Color>  BackGroundColorInItem = [Color(0xff1e3c72), Color(0xff2a5298)];
-
   //Khởi tạo
   @override
   void initState() {
@@ -100,151 +96,209 @@ class _ListElectionsScreenState extends State<ListElectionsScreen> {
   }
 
   //Hiển thị danh sách các kỳ bầu c có thể tham gia
-  FutureBuilder<List<ElectionVoterHavePaticipanted_Model>> ShowList(){
-    return FutureBuilder<List<ElectionVoterHavePaticipanted_Model>>
-    (
+  FutureBuilder<List<ElectionVoterHavePaticipanted_Model>> ShowList() {
+    return FutureBuilder<List<ElectionVoterHavePaticipanted_Model>>(
       future: _danhsachbaucuFuture,
-      builder: (context, snapshot){
-        if(snapshot.connectionState == ConnectionState.waiting){
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return LoadingPage();
-        }else if(snapshot.hasError){
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }else{
-          return ListView.builder(
-            itemCount: _fillDanhSachBauCuList.length,
-            physics: AlwaysScrollableScrollPhysics(),
-            itemBuilder: (BuildContext context, int index){
-              //Đổi màu chữ và nền
-              if(_fillDanhSachBauCuList[index].ghiNhan == '0'){
-                TextColorInItem = Colors.black87;
-                BackGroundColorInItem = [Color(0xffe65c00), Color(0xfff9d423)];
-              }
-
-              return Container(
-                margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.0),
-                  gradient:LinearGradient(
-                    colors: BackGroundColorInItem,
-                    stops: [0, 1],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.8), // Màu của bóng và độ trong suốt
-                      spreadRadius: 5, // Bán kính mà bóng lan rộng
-                      blurRadius: 7, // Độ mờ của bóng
-                      offset: Offset(0, 3), // Độ dịch chuyển của bóng theo trục x và y
-                    ),
-                  ],
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, size: 60, color: Colors.red),
+                SizedBox(height: 16),
+                Text(
+                  'Đã có lỗi xảy ra\n${snapshot.error}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16),
                 ),
-                child: ElevatedButton(
-                  onPressed: (){
-
-                    if(_fillDanhSachBauCuList[index].ghiNhan == '0'){
-                      print('Đi đến form bỏ phiếu');
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => BallotForm(ngayBD: _fillDanhSachBauCuList[index].ngayBD, electionDetails: _fillDanhSachBauCuList[index],ID_object: ID_object, ))
-                      );
-                    }else{
-                      QuickAlert.show(
-                          context: context,
-                          type: QuickAlertType.warning,
-                          title: "Đã bỏ phiếu",
-                          text: "Bạn đã bỏ phiếu ở kỳ này rồi"
-                      );
-                    }
-                  },
-                  style: ButtonStyle(
-                    backgroundColor:
-                    MaterialStateProperty.all(Colors.transparent),
-                    shadowColor:
-                    MaterialStateProperty.all(Colors.transparent),
-                  ),
-                  child: ListTile(
-                    title: Column(children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            flex: 1,
-                             child: Icon(
-                                Icons.people_alt_outlined,
-                              size: 55,
-                              color: TextColorInItem,  ),
-                           ),
-                          const SizedBox(width: 10,),
-                          Flexible(
-                            flex: 4,
-                            child: Column(
-                              children: [
-                                FittedBox(
-                                  fit: BoxFit.fitWidth,
-                                  child: RichText(
-                                      text: TextSpan(children: [
-                                        const TextSpan(text: 'Tên kỳ bầu cử: ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
-                                        TextSpan(text: '${_fillDanhSachBauCuList[index].tenKyBauCu}')
-                                      ],
-                                      style: TextStyle(color: TextColorInItem,),),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ),
-                                FittedBox(
-                                  fit: BoxFit.fitWidth,
-                                  child: RichText(
-                                    text: TextSpan(children: [
-                                      const TextSpan(text: 'Tên đơn vị: ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
-                                      TextSpan(text: '${_fillDanhSachBauCuList[index].tenDonViBauCu}')
-                                    ],
-                                      style: TextStyle(color: TextColorInItem,),),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 8,),
-                      Row(children: [
-                        Expanded(
-                          flex: 1,
-                          child: RichText(
-                              text: TextSpan(children: [
-                                const TextSpan(text: 'Bỏ phiếu: ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
-                                TextSpan(text: '${_fillDanhSachBauCuList[index].ghiNhan == '0'? 'Chưa': 'Đã bỏ phiếu'}')
-                              ], style: TextStyle(color: TextColorInItem))
-                          ),
-                        ),
-                        const SizedBox(width: 10,),
-                        Expanded(
-                          flex: 2,
-                          child: RichText(
-                              text: TextSpan(children: [
-                                const TextSpan(text: 'Ngày bắt đầu: ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
-                                TextSpan(text: '${widgetLibraryState.DateTimeFormat(_fillDanhSachBauCuList[index].ngayBD) }')
-                              ], style: TextStyle(color: TextColorInItem))
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child:Icon(
-                            Icons.keyboard_double_arrow_right,
-                            size: 55,
-                            color: TextColorInItem,  ),
-                        ),
-                      ],),
-
-                    ],),
-                  ),
+              ],
+            ),
+          );
+        } else if (_fillDanhSachBauCuList.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.ballot_outlined, size: 60, color: Colors.grey),
+                SizedBox(height: 16),
+                Text(
+                  'Chưa có kỳ bầu cử nào',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                 ),
-              );
-            }
+              ],
+            ),
           );
         }
-      }
+
+        return ListView.builder(
+          itemCount: _fillDanhSachBauCuList.length,
+          physics: BouncingScrollPhysics(),
+          padding: EdgeInsets.symmetric(vertical: 8),
+          itemBuilder: (BuildContext context, int index) {
+            final election = _fillDanhSachBauCuList[index];
+            final hasVoted = election.ghiNhan != '0';
+
+            // Màu chữ tùy theo trạng thái
+            final textColor = hasVoted ? Colors.white : Colors.black87;
+            // Màu icon tùy theo trạng thái
+            final iconColor = hasVoted ? Colors.white : Colors.black87;
+            // Màu nền trong suốt tùy theo trạng thái
+            final containerColor = hasVoted
+                ? Colors.white.withOpacity(0.2)
+                : Colors.black.withOpacity(0.1);
+
+            return Card(
+              elevation: 4,
+              margin: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  if (!hasVoted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BallotForm(
+                          ngayBD: election.ngayBD,
+                          electionDetails: election,
+                          ID_object: ID_object,
+                        ),
+                      ),
+                    );
+                  } else {
+                    QuickAlert.show(
+                      context: context,
+                      type: QuickAlertType.warning,
+                      title: "Đã bỏ phiếu",
+                      text: "Bạn đã bỏ phiếu ở kỳ này rồi",
+                    );
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: LinearGradient(
+                      colors: hasVoted
+                          ? [Color(0xFF1E88E5), Color(0xFF1565C0)]  // Màu xanh cho đã bỏ phiếu
+                          : [Color(0xFFFFC107), Color(0xFFFFB300)], // Điều chỉnh màu cam nhẹ hơn
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: containerColor,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                hasVoted ? Icons.how_to_vote : Icons.ballot_outlined,
+                                color: iconColor,
+                                size: 28,
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    election.tenKyBauCu ?? '',
+                                    style: TextStyle(
+                                      color: textColor,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    election.tenDonViBauCu ?? '',
+                                    style: TextStyle(
+                                      color: textColor.withOpacity(0.9),
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: containerColor,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.calendar_today,
+                                color: iconColor,
+                                size: 16,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                widgetLibraryState.DateTimeFormat(election.ngayBD),
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: hasVoted
+                                ? Colors.green.withOpacity(0.3)
+                                : Colors.black.withOpacity(0.1),  // Màu nền đậm hơn cho status
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                hasVoted ? Icons.check_circle : Icons.pending,
+                                color: iconColor,
+                                size: 16,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                hasVoted ? 'Đã bỏ phiếu' : 'Chưa bỏ phiếu',
+                                style: TextStyle(
+                                  color: textColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,  // Làm đậm chữ status
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
