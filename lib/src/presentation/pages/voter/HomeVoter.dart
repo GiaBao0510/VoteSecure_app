@@ -11,6 +11,7 @@ import 'package:votesecure/src/presentation/pages/common/ElectionResult/Election
 import 'package:votesecure/src/presentation/pages/common/Notification/AnnouncemantPage.dart';
 import 'package:votesecure/src/presentation/pages/common/SupportInformationSubmission/SupportInformationSubmission_page.dart';
 import 'package:votesecure/src/presentation/pages/voter/ListElections.dart';
+import 'package:votesecure/src/presentation/pages/voter/ListOfVotingHistory.dart';
 import 'package:votesecure/src/presentation/widgets/TitleAppBarForHomePage.dart';
 import 'package:votesecure/src/presentation/pages/common/account/Account.dart';
 
@@ -238,6 +239,18 @@ class HomeScreen extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => ElectionResultScreen(ID_obj: ID_object),
+            ),
+          ),
+        ),
+        _buildFeatureCard(
+          context,
+          'Lịch sử \nbỏ phiếu',
+          Icons.history,
+          const Color(0xFFFF9800),
+              () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ListOfVotingHistory(ID_object: ID_object),
             ),
           ),
         ),

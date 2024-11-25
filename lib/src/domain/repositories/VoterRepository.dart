@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:votesecure/src/config/AppConfig_api.dart';
+import 'package:votesecure/src/data/models/VotingHistoryModel.dart';
 import 'package:votesecure/src/domain/repositories/Token_Repositories.dart';
 import 'package:votesecure/src/presentation/pages/shared/login.dart';
 
@@ -223,6 +224,53 @@ class VoterRepository with ChangeNotifier{
         throw Exception('HTTP error: ${e.message}');
       } else if (e is FormatException) {
         throw Exception('Bad response format: ${e.message}');
+      } else {
+        throw Exception('Error occurred while fetching data: $e');
+      }
+    }
+  }
+
+  //Lấy danh sách lịch sử bỏ phiếu
+  Future<List<VotingHistoryModel>> GetListOfVotingHistory(BuildContext context, String ID_CuTri) async{
+    try{
+      final accessToken = await _tokenRepository.getAccessToken();
+      String uri = getListOfVotingHistory+ID_CuTri;
+      print('Path: ${uri}');
+
+      // Hiển thị dialog chờ đợi
+      widgetlibraryState.buildingAwaitingFeedback_2(context);
+
+      var res = await http.get(
+          Uri.parse(uri),
+          headers: {
+            "Content-Type":"application/json",
+            "Authorization": "Bearer $accessToken",
+          }
+      );
+
+      // Đóng dialog sau khi có phản hồi từ server
+      Navigator.of(context).pop();
+
+      print(res.body);
+      if(res.statusCode == 200){
+        Map<String,dynamic> json = jsonDecode(res.body);
+        List<dynamic> data = json['data'];
+        List<VotingHistoryModel> ListOfVotingHistory
+          = data.map((e) => VotingHistoryModel.fromMap(e)).toList();
+
+        notifyListeners();
+        return ListOfVotingHistory;
+      }else{
+        notifyListeners();
+        throw Exception('Failed to load data');
+      }
+    }catch(e){
+      if (e is SocketException) {
+        throw Exception('No internet connection');
+      } else if (e is HttpException) {
+        throw Exception('HTTP error: ${e.message}');
+      } else if (e is FormatException) {
+        throw Exception('Bad response format');
       } else {
         throw Exception('Error occurred while fetching data: $e');
       }
