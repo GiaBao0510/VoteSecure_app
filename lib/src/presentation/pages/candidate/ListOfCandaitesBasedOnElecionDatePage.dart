@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:votesecure/src/config/AppConfig_api.dart';
+import 'dart:math' as math;
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/CandidateListBasedOnElctionDateModel.dart';
+import 'package:votesecure/src/data/models/ElectionsUsersHavePaticipated_Model.dart';
+import 'package:votesecure/src/domain/repositories/CadreRepository.dart';
 import 'package:votesecure/src/domain/repositories/CandidateRepository.dart';
 import 'package:votesecure/src/presentation/pages/shared/LoadingPage.dart';
 import 'package:votesecure/src/presentation/widgets/TitleAppBar.dart';
@@ -12,26 +16,48 @@ import 'package:votesecure/src/presentation/pages/common/Introduction/CandidateI
 class ListOfCandidatesBasedOnElectionDateScreen extends StatefulWidget {
   static const routeName = 'list-of-candidate-based-on-election';
   final String ngayBD;
+  final String ID_object;
+  final bool CandidateVote;
+  final ElectionUserHavePaticipanted_Model electionDetails;
+
   const ListOfCandidatesBasedOnElectionDateScreen({
     super.key,
-    required this.ngayBD
+    required this.ngayBD,
+    required this.electionDetails,
+    required this.ID_object,
+    required this.CandidateVote
   });
 
   @override
-  State<ListOfCandidatesBasedOnElectionDateScreen> createState() => _ListOfCandidatesBasedOnElectionDateScreenState(ngayBD: ngayBD);
+  State<ListOfCandidatesBasedOnElectionDateScreen> createState()
+  => _ListOfCandidatesBasedOnElectionDateScreenState(
+      ngayBD: ngayBD,
+      electionDetails: electionDetails,
+      ID_object: ID_object,
+      CandidateVote: CandidateVote
+  );
 }
 
 class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandidatesBasedOnElectionDateScreen> {
   final CandidateRepository candidateRepository = CandidateRepository();
+  final CadreRepository cadreRepository = CadreRepository();
   final TextEditingController _searchController = TextEditingController();
   late Future<List<CandidateListBasedonElEctionDateModel>> _danhsachungcuvienFuture;
   WidgetlibraryState widgetLibraryState = WidgetlibraryState();
   List<CandidateListBasedonElEctionDateModel> _fillDanhSachUngCuVienList = [];
   List<CandidateListBasedonElEctionDateModel> _danhSachUngCuVienList = [];
+  final ElectionUserHavePaticipanted_Model electionDetails;
+  final bool CandidateVote;
+  final String ID_object;
   final String ngayBD;
+  int DemSoLuotBinhChon = 0;
+  late List<int> ThongTinPhieuBau;
 
   _ListOfCandidatesBasedOnElectionDateScreenState({
-    required this.ngayBD
+    required this.ngayBD,
+    required this.electionDetails,
+    required this.ID_object,
+    required this.CandidateVote
   });
 
   //hàm khởi tạo
@@ -56,6 +82,7 @@ class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandid
       setState(() {
         _danhSachUngCuVienList = ungcuviens;
         _fillDanhSachUngCuVienList = ungcuviens;
+        ThongTinPhieuBau = List.generate(_fillDanhSachUngCuVienList.length, (_) => 0);
       });
     });
   }
@@ -95,6 +122,7 @@ class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandid
         Expanded(
             child: ShowList()
         ),
+        _buildVoteSubmitButton(context),
       ],),
     );
   }
@@ -148,6 +176,53 @@ class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandid
                           );
                         },
                         child: ListTile(
+                          leading: Checkbox(
+                            value: _fillDanhSachUngCuVienList[index].IsSelected,
+                            onChanged: (bool? value) {
+                              //Nếu người dùng bỏ chọn ô đã chọn trước đó
+                              if (value == false) {
+                                setState(() {
+                                  _fillDanhSachUngCuVienList[index].IsSelected = value!;
+                                  DemSoLuotBinhChon--;
+                                  ThongTinPhieuBau[index] = 0;
+                                });
+                              } else {
+                                //Kiểm tra điều kiện khi người dùng chọn thêm
+                                if (DemSoLuotBinhChon < electionDetails.soLuotBinhChonToiDa) {
+                                  setState(() {
+                                    _fillDanhSachUngCuVienList[index].IsSelected = value!;
+                                    DemSoLuotBinhChon++;
+                                    ThongTinPhieuBau[index] = 1;
+                                  });
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Chỉ có thể chọn tối đa ${electionDetails.soLuotBinhChonToiDa} lần.'),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8.0),
+                                      ),
+                                      behavior: SnackBarBehavior.floating,
+                                      margin: const EdgeInsets.only(
+                                          bottom: 60.0, left: 16.0, right: 16.0),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                        vertical: 12.0,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                            activeColor: Colors.white,
+                            checkColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(2.0),
+                            ),
+                            side: MaterialStateBorderSide.resolveWith(
+                                  (states) => BorderSide(width: 2.0, color: Colors.white),
+                            ),
+                          ),
                           subtitle: Row(
                             children: [
                               Flexible(
@@ -324,4 +399,251 @@ class _ListOfCandidatesBasedOnElectionDateScreenState extends State<ListOfCandid
       ),
     );
   }
+
+  //Phần gửi
+  Widget _buildVoteSubmitButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(5, 10, 5, 0),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: _BuildRegulatoryInformation(context),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            flex: 1,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue, Colors.blueAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                ),
+                onPressed: () async {
+                  // Kiểm tra xem có ít nhất một ứng cử viên được chọn không
+                  if (!_fillDanhSachUngCuVienList.any((task) => task.IsSelected)) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Vui lòng chọn ít nhất một ứng cử viên.'),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        behavior: SnackBarBehavior.floating,
+                        margin: const EdgeInsets.only(bottom: 60.0, left: 16.0, right: 16.0),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 12.0,
+                        ),
+                      ),
+                    );
+                    return;
+                  }
+
+                  // Hiển thị dialog xác nhận
+                  bool? confirmResult = await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Xác nhận gửi phiếu bầu'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Bạn có chắc chắn muốn gửi phiếu bầu với:'),
+                            SizedBox(height: 8),
+                            Text('- ${DemSoLuotBinhChon} lượt bình chọn',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text('- ${_fillDanhSachUngCuVienList.where((task) => task.IsSelected).length} ứng cử viên được chọn',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            SizedBox(height: 8),
+                            Text('Lưu ý: Hành động này không thể hoàn tác sau khi xác nhận.',
+                                style: TextStyle(color: Colors.red, fontSize: 12)),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            child: Text('Chỉnh sửa'),
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                          ElevatedButton(
+                            child: Text('Xác nhận'),
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  // Nếu người dùng xác nhận, tiến hành gửi phiếu bầu
+                  if (confirmResult == true) {
+                    //Hiển thị thông tin trước khi tính giá trị phiếu bầu
+                    print('--------- Thông tin trước khi tính giá trị phiếu bầu --------');
+                    print('Số lượt bình chọn tối đa (S): ${electionDetails.soLuotBinhChonToiDa}');
+                    print('Số lượng cử tri (N): ${electionDetails.soLuongToiDaCuTri}');
+                    print('Số lượng ứng viên (K): ${electionDetails.soLuongToiDaUngCuVien}');
+                    print('Số lượng bình chọn hiện tại đã chọn: ${DemSoLuotBinhChon}');
+                    print('Thông tin phiếu bầu: ${ThongTinPhieuBau}');
+
+                    int b = electionDetails.soLuongToiDaCuTri + 1; //Cơ số b-phân
+                    print('Cơ số b phân: ${b}');
+                    BigInt GiaTriPhieu = BigInt.zero;
+                    for (int i = 0; i < ThongTinPhieuBau.length; i++) {
+                      GiaTriPhieu += BigInt.from(ThongTinPhieuBau[i]) * BigInt.from(math.pow(b, i));
+                    }
+                    // print('Giá trị phiếu: ${GiaTriPhieu}');
+                    // print('ID_cutri: ${ID_object}');
+                    // print('iD_cap: ${electionDetails.iD_Cap}');
+                    // print('iD_DonViBauCu: ${electionDetails.iD_Cap}');
+                    // print('ngayBD: ${electionDetails.ngayBD}');
+                    // print('-----------------------------------------');
+
+                    try {
+
+                      bool guiPhieu = true;
+
+                      switch (CandidateVote) {
+                        case true:
+                          print('ứng cử viên gửi phiếu');
+                          guiPhieu = await candidateRepository.CandidateVote(context, electionDetails, ID_object, GiaTriPhieu);
+                          break;
+                        case false:
+                          print('Cán bộ gửi phiếu');
+                          guiPhieu = await cadreRepository.CadreVote(context, electionDetails, ID_object, GiaTriPhieu);
+                          break;
+                        default:
+                          break;
+                      }
+
+                      //Kết quả
+                      if(guiPhieu){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Gửi phiếu bầu thành công!'),
+                            backgroundColor: Colors.green,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            margin: const EdgeInsets.only(bottom: 60.0, left: 16.0, right: 16.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 12.0,
+                            ),
+                          ),
+                        );
+                      }else{
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Có lỗi xảy ra khi gửi phiếu bầu. Vui lòng thử lại.'),
+                            backgroundColor: Colors.red,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            margin: const EdgeInsets.only(bottom: 60.0, left: 16.0, right: 16.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 12.0,
+                            ),
+                          ),
+                        );
+                      }
+
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Có lỗi xảy ra khi gửi phiếu bầu. Vui lòng thử lại.'),
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                          margin: const EdgeInsets.only(bottom: 60.0, left: 16.0, right: 16.0),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 12.0,
+                          ),
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Gửi',
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(Icons.send, color: Colors.white),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  //Thông tin quy định
+  Widget _BuildRegulatoryInformation(BuildContext cotext){
+    return Column(children: [
+      RichText(
+        text: TextSpan(
+          style: TextStyle(color: Colors.black),
+          children: [
+            TextSpan(
+                text: 'Số lượt bình chọn tối đa: ',
+                style: TextStyle(
+                    fontSize: 12, fontWeight: FontWeight.bold)),
+            TextSpan(
+                text: '${electionDetails.soLuotBinhChonToiDa}',
+                style: TextStyle(
+                  fontSize: 12,
+                )),
+          ],
+        ),
+      ),
+      RichText(
+        text: TextSpan(
+          style: TextStyle(color: Colors.black),
+          children: [
+            TextSpan(
+                text: 'Số lượng ứng viên: ',
+                style: TextStyle(
+                    fontSize: 12, fontWeight: FontWeight.bold)),
+            TextSpan(
+                text: '${electionDetails.soLuongToiDaUngCuVien}',
+                style: TextStyle(
+                  fontSize: 12,
+                )),
+          ],
+        ),
+      ),
+    ],);
+  }
+
 }

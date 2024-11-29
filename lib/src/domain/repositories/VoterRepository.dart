@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
-import 'package:votesecure/src/data/models/ElectionsVotersHavePaticipated_Model.dart';
+import 'package:votesecure/src/data/models/ElectionsUsersHavePaticipated_Model.dart';
 import 'package:votesecure/src/data/models/VoterInformationAfterScaningModel.dart';
 import 'dart:convert';
 import 'dart:async';
@@ -117,7 +117,7 @@ class VoterRepository with ChangeNotifier{
   }
 
   //Lấy thời điểm các kỳ bầu cử dựa trên SDT người dùng được tham dụ
-  Future<List<ElectionVoterHavePaticipanted_Model>> ElectionsInWhichVoterAreAlloweddToParticipate(BuildContext context) async{
+  Future<List<ElectionUserHavePaticipanted_Model>> ElectionsInWhichVoterAreAlloweddToParticipate(BuildContext context) async{
     try{
       final accessToken = await _tokenRepository.getAccessToken();
       SharedPreferences pref = await  SharedPreferences.getInstance();
@@ -143,8 +143,8 @@ class VoterRepository with ChangeNotifier{
       if(res.statusCode == 200){
         Map<String,dynamic> json = jsonDecode(res.body);
         List<dynamic> data = json['data'];
-        List<ElectionVoterHavePaticipanted_Model> electionVoterHavePaticipanted
-          = data.map((e) => ElectionVoterHavePaticipanted_Model.fromMap(e)).toList();
+        List<ElectionUserHavePaticipanted_Model> electionVoterHavePaticipanted
+          = data.map((e) => ElectionUserHavePaticipanted_Model.fromMap(e)).toList();
 
         notifyListeners();
         return electionVoterHavePaticipanted;
@@ -166,7 +166,7 @@ class VoterRepository with ChangeNotifier{
   }
 
   // Cu tri bo phiếu
-  Future<bool> VoterVote(BuildContext context,ElectionVoterHavePaticipanted_Model electionDetail, String ID_object, BigInt GiaTriPhieu) async{
+  Future<bool> VoterVote(BuildContext context,ElectionUserHavePaticipanted_Model electionDetail, String ID_object, BigInt GiaTriPhieu) async{
     try{
       final accessToken = await _tokenRepository.getAccessToken();
       String uri = voterVote;

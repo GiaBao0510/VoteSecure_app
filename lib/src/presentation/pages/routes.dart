@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:votesecure/src/data/models/CadreJoinedForElectionModel.dart';
-import 'package:votesecure/src/data/models/ElectionsVotersHavePaticipated_Model.dart';
+import 'package:votesecure/src/data/models/ElectionsUsersHavePaticipated_Model.dart';
 import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/data/models/VerifyOtpModel.dart';
 import 'package:votesecure/src/data/models/VoterInformationAfterScaningModel.dart';
@@ -39,13 +39,13 @@ import 'package:votesecure/src/presentation/pages/voter/ListElections.dart';
 final HoSoNguoiDung = new ProfileModel(
     HoTen: '', GioiTinh: '', DiaChi: '', Email: '', SDT: '', HinhAnh: '',
     TenDanToc: '', NgaySinh: DateTime.now(), ID_Object: 'null', ID_User: 'null');
-final CuTriDaDuocThamDuKyBauCu =  new ElectionVoterHavePaticipanted_Model(
+final NguoiDungDaDuocThamDuKyBauCu =  new ElectionUserHavePaticipanted_Model(
     ngayBD: '', ngayKT: '', tenKyBauCu: '', mota: '', ghiNhan: '', tenDonViBauCu: '',
     soLuongToiDaCuTri: 0, soLuongToiDaUngCuVien: 0, soLuotBinhChonToiDa: 0,iD_Cap:0,iD_DonViBauCu:0);
 final CanBoThamDuCuocBauCu = new CadreJoinedForElectionModel(
     tenKyBauCu: '', moTa: '', tenCapUngCu: '', tenDonViBauCu: '', ngayBD: '',
     ngayKT: '', CongBo: '', SoLuongToiDaCuTri: 0, SoLuongToiDaUngCuVien: 0,
-    SoLuotBinhChonToiDa: 0);
+    SoLuotBinhChonToiDa: 0, iD_Cap: -1, iD_DonViBauCu: -1, ghiNhan: '');
 
 final Map<String, WidgetBuilder> routes = {
   Nonetwork.routerName: (ctx) => Nonetwork(),
@@ -66,11 +66,13 @@ final Map<String, WidgetBuilder> routes = {
   PrivacyPolicyPage.routeName:(ctx) => ListElectionsScreen(ID_object: '',),
   FeedbackPage.routeName:(ctx) => FeedbackPage(IDSender: '',uri: '',),
   BallotForm.routeName:(ctx) => BallotForm(ngayBD: '',ID_object: '' ,
-    electionDetails: CuTriDaDuocThamDuKyBauCu,),
+    electionDetails: NguoiDungDaDuocThamDuKyBauCu,),
   EditProfilePage.routeName:(ctx) => EditProfilePage(user:HoSoNguoiDung ,),
   RegisterAndSetPwdScreen.routeName:(ctx) => RegisterAndSetPwdScreen(SDT: '',),
   ListofRegisteredCandidateScreen.routeName:(ctx) => ListofRegisteredCandidateScreen(ID_ucv: '',),
-  ListOfCandidatesBasedOnElectionDateScreen.routeName:(ctx) =>ListOfCandidatesBasedOnElectionDateScreen(ngayBD: '',),
+  ListOfCandidatesBasedOnElectionDateScreen.routeName:(ctx) =>
+      ListOfCandidatesBasedOnElectionDateScreen(ngayBD: '',ID_object: '' ,
+        electionDetails: NguoiDungDaDuocThamDuKyBauCu, CandidateVote: false,),
   ListOfCadreJoinedForElection.routeName:(ctx) => ListOfCadreJoinedForElection(ID_CanBo: '',),
   DetailedListOfVotesBasedOnTheElection.routeName:(ctx) => DetailedListOfVotesBasedOnTheElection(ngayBD: '',ID_CanBo: '',cadreJoinedForElectionModel: CanBoThamDuCuocBauCu,),
   ProfileUserScreen.routeName: (ctx) =>ProfileUserScreen(ID_user: '',),

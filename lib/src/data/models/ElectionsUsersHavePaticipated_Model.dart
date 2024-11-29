@@ -1,12 +1,12 @@
 import 'package:intl/intl.dart';
 
-class ElectionVoterHavePaticipanted_Model{
+class ElectionUserHavePaticipanted_Model{
   final String ngayBD, ngayKT;
   final String? tenKyBauCu, mota, ghiNhan, tenDonViBauCu;
   final int soLuongToiDaCuTri, soLuongToiDaUngCuVien, soLuotBinhChonToiDa,
       iD_Cap,iD_DonViBauCu;
 
-  ElectionVoterHavePaticipanted_Model({
+  ElectionUserHavePaticipanted_Model({
     required this.ngayBD,
     required this.ngayKT,
     required this.tenKyBauCu,
@@ -20,7 +20,7 @@ class ElectionVoterHavePaticipanted_Model{
     required this.iD_DonViBauCu,
   });
 
-  ElectionVoterHavePaticipanted_Model copywith({
+  ElectionUserHavePaticipanted_Model copywith({
     String? tenKyBauCu,
     String? mota,
     String? ngayBD,
@@ -33,7 +33,7 @@ class ElectionVoterHavePaticipanted_Model{
     int? iD_Cap,
     int? iD_DonViBauCu,
   }){
-    return ElectionVoterHavePaticipanted_Model(
+    return ElectionUserHavePaticipanted_Model(
       tenKyBauCu: tenKyBauCu ?? this.tenKyBauCu,
       mota:  mota?? this.mota,
       ngayBD: ngayBD ?? this.ngayBD,
@@ -64,9 +64,9 @@ class ElectionVoterHavePaticipanted_Model{
     };
   }
 
-  factory ElectionVoterHavePaticipanted_Model.fromMap(Map<String, dynamic> map){
+  factory ElectionUserHavePaticipanted_Model.fromMap(Map<String, dynamic> map){
     final DateFormat dateFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
-    return ElectionVoterHavePaticipanted_Model(
+    return ElectionUserHavePaticipanted_Model(
       tenKyBauCu: map['tenKyBauCu'] ?? 'null',
       mota: map['mota'] ?? 'null',
       ngayBD: map['ngayBD'] ?? 'null',
@@ -74,10 +74,10 @@ class ElectionVoterHavePaticipanted_Model{
       ghiNhan: map['ghiNhan'] ?? 'null',
       tenDonViBauCu: map['tenDonViBauCu'] ?? 'null',
       soLuongToiDaCuTri: map['soLuongToiDaCuTri'],
-      soLuongToiDaUngCuVien: map['soLuongToiDaUngCuVien'],
-      soLuotBinhChonToiDa: map['soLuotBinhChonToiDa'],
-      iD_Cap: map['iD_Cap'] ?? 'null',
-      iD_DonViBauCu: map['iD_DonViBauCu'] ?? 'null',
+      soLuongToiDaUngCuVien: map['soLuongToiDaUngCuVien'] ?? -1,
+      soLuotBinhChonToiDa: map['soLuotBinhChonToiDa'] ?? -1,
+      iD_Cap: map['iD_Cap'] ?? -1,
+      iD_DonViBauCu: map['iD_DonViBauCu'] ?? -1,
     );
   }
 }

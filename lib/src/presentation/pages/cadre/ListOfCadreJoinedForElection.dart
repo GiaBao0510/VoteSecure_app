@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/CadreJoinedForElectionModel.dart';
+import 'package:votesecure/src/data/models/ElectionsUsersHavePaticipated_Model.dart';
 import 'package:votesecure/src/domain/repositories/CadreRepository.dart';
 import 'package:votesecure/src/presentation/pages/cadre/DetailedListOfVotesBasedOnTheElection.dart';
 import 'package:votesecure/src/presentation/pages/candidate/ListOfCandaitesBasedOnElecionDatePage.dart';
@@ -260,67 +261,186 @@ class _ListOfCadreJoinedForElectionState extends State<ListOfCadreJoinedForElect
   }
 
   //Xây dựng phần nút chuyển trang
-  Widget _buildNavigationButtonSection(BuildContext content, int index){
+  Widget _buildNavigationButtonSection(BuildContext content, int index) {
     final itemColors = _getItemColors(_fillDanhSachBauCuList[index].CongBo ?? '0');
     final textColor = itemColors['textColor'];
     final bgColor = itemColors['bgColor'];
+    final hasVoted = _fillDanhSachBauCuList[index].ghiNhan == "1";
 
-    return Row(children: [
-      Expanded(
-        flex: 1,
-        child: ElevatedButton(
-            onPressed: (){
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ListOfCandidatesBasedOnElectionDateScreen(ngayBD: _fillDanhSachBauCuList[index].ngayBD ?? '', ))
-              );
-            },
-            child: RichText(
-                text: TextSpan(children: [
-                  WidgetSpan(
-                    child: Icon(Icons.people_alt_sharp, size: 20),
-                  ),
-                  const TextSpan(text: ' Danh sách ứng cử viên ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13))
-                ], style: TextStyle(color: bgColor)),
-              textAlign: TextAlign.center,
+    return Row(
+      children: [
+        Expanded(
+          flex: 1,
+          child: Container(
+            height: 45,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              gradient: LinearGradient(
+                colors: hasVoted
+                    ? [Colors.grey.shade400, Colors.grey.shade600]
+                    : [Colors.green.shade400, Colors.green.shade700],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: Offset(0, 2),
+                ),
+              ],
             ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: textColor,
-            foregroundColor: bgColor,
+            child: ElevatedButton(
+              onPressed: hasVoted
+                  ? () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Kỳ bầu cử này đã bỏ phiếu rồi',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    backgroundColor: Colors.red.shade700,
+                    duration: Duration(seconds: 2),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                );
+              }
+                  : () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ListOfCandidatesBasedOnElectionDateScreen(
+                      ngayBD: _fillDanhSachBauCuList[index].ngayBD ?? '',
+                      ID_object: ID_CanBo,
+                      electionDetails: ElectionUserHavePaticipanted_Model(
+                        iD_DonViBauCu: _fillDanhSachBauCuList[index].iD_DonViBauCu,
+                        iD_Cap: _fillDanhSachBauCuList[index].iD_Cap,
+                        ngayBD: _fillDanhSachBauCuList[index].ngayBD,
+                        tenDonViBauCu: _fillDanhSachBauCuList[index].tenDonViBauCu,
+                        tenKyBauCu: _fillDanhSachBauCuList[index].tenKyBauCu,
+                        soLuotBinhChonToiDa: _fillDanhSachBauCuList[index].SoLuotBinhChonToiDa,
+                        soLuongToiDaUngCuVien: _fillDanhSachBauCuList[index].SoLuongToiDaUngCuVien,
+                        soLuongToiDaCuTri: _fillDanhSachBauCuList[index].SoLuongToiDaCuTri,
+                        ngayKT: _fillDanhSachBauCuList[index].ngayKT,
+                        mota: 'null',
+                        ghiNhan: 'null',
+                      ),
+                      CandidateVote: false,
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      hasVoted ? Icons.check_circle : Icons.how_to_vote,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      hasVoted ? 'Đã bỏ phiếu' : 'Bỏ phiếu',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
-      ),
-      const SizedBox(width: 10,),
-      Expanded(
-        flex: 1,
-        child: ElevatedButton(
-          onPressed: (){
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) =>
-                    DetailedListOfVotesBasedOnTheElection(
+        SizedBox(width: 8),
+        Expanded(
+          flex: 1,
+          child: Container(
+            height: 45,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              gradient: LinearGradient(
+                colors: [Colors.blue.shade400, Colors.blue.shade700],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 3,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailedListOfVotesBasedOnTheElection(
                       ngayBD: _fillDanhSachBauCuList[index].ngayBD ?? '',
                       ID_CanBo: ID_CanBo,
-                      cadreJoinedForElectionModel: _fillDanhSachBauCuList[index], )
-                    )
-            );
-          },
-          child: RichText(
-            text: TextSpan(children: [
-              WidgetSpan(
-                child: Icon(Icons.how_to_vote_outlined, size: 20),
+                      cadreJoinedForElectionModel: _fillDanhSachBauCuList[index],
+                    ),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
-              const TextSpan(text: ' Danh sách phiếu bầu ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 13))
-            ], style: TextStyle(color: bgColor)),
-            textAlign: TextAlign.center,
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: textColor,
-            foregroundColor: bgColor,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.list_alt,
+                      size: 18,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      'DS phiếu',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
-      ),
-    ],);
+      ],
+    );
   }
 
 }

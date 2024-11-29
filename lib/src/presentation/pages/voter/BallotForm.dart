@@ -4,7 +4,7 @@ import 'dart:math' as math;
 import 'package:provider/provider.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/CandidateListBasedOnElctionDateModel.dart';
-import 'package:votesecure/src/data/models/ElectionsVotersHavePaticipated_Model.dart';
+import 'package:votesecure/src/data/models/ElectionsUsersHavePaticipated_Model.dart';
 import 'package:votesecure/src/domain/repositories/CandidateRepository.dart';
 import 'package:votesecure/src/domain/repositories/VoterRepository.dart';
 import 'package:votesecure/src/presentation/pages/shared/LoadingPage.dart';
@@ -16,7 +16,7 @@ class BallotForm extends StatefulWidget {
   static const routeName = 'ballot-form';
   final String ngayBD;
   final String ID_object;
-  final ElectionVoterHavePaticipanted_Model electionDetails;
+  final ElectionUserHavePaticipanted_Model electionDetails;
 
   const BallotForm({
     super.key,
@@ -33,7 +33,7 @@ class _BallotFormState extends State<BallotForm> {
   //Thuộc tính
   final String ngayBD;
   final String ID_object;
-  final ElectionVoterHavePaticipanted_Model electionDetails;
+  final ElectionUserHavePaticipanted_Model electionDetails;
   WidgetlibraryState widgetLibraryState = WidgetlibraryState();
   final CandidateRepository  candidateRepository = CandidateRepository();
   final VoterRepository  voterRepository = VoterRepository();

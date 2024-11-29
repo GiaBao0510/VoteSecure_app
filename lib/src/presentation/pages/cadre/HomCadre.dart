@@ -178,7 +178,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                     _buildActionCard(
                       context,
-                      'Danh sách ứng viên',
+                      'Danh sách kỳ bầu cử',
                       Icons.people_rounded,
                       Colors.green,
                           () => Navigator.push(

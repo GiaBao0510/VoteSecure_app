@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
-import 'package:votesecure/src/data/models/ElectionsVotersHavePaticipated_Model.dart';
+import 'package:votesecure/src/data/models/ElectionsUsersHavePaticipated_Model.dart';
 import 'package:votesecure/src/domain/repositories/VoterRepository.dart';
 import 'package:votesecure/src/presentation/pages/shared/LoadingPage.dart';
 import 'package:votesecure/src/presentation/widgets/TitleAppBar.dart';
@@ -25,9 +25,9 @@ class _ListElectionsScreenState extends State<ListElectionsScreen> {
   WidgetlibraryState widgetLibraryState = WidgetlibraryState();
   final VoterRepository  voterRepository = VoterRepository();
   final TextEditingController _searchController = TextEditingController();
-  late Future<List<ElectionVoterHavePaticipanted_Model>> _danhsachbaucuFuture;
-  List<ElectionVoterHavePaticipanted_Model> _fillDanhSachBauCuList = [];
-  List<ElectionVoterHavePaticipanted_Model> _danhSachBauCuList = [];
+  late Future<List<ElectionUserHavePaticipanted_Model>> _danhsachbaucuFuture;
+  List<ElectionUserHavePaticipanted_Model> _fillDanhSachBauCuList = [];
+  List<ElectionUserHavePaticipanted_Model> _danhSachBauCuList = [];
 
   _ListElectionsScreenState({required this.ID_object});
 
@@ -96,8 +96,8 @@ class _ListElectionsScreenState extends State<ListElectionsScreen> {
   }
 
   //Hiển thị danh sách các kỳ bầu c có thể tham gia
-  FutureBuilder<List<ElectionVoterHavePaticipanted_Model>> ShowList() {
-    return FutureBuilder<List<ElectionVoterHavePaticipanted_Model>>(
+  FutureBuilder<List<ElectionUserHavePaticipanted_Model>> ShowList() {
+    return FutureBuilder<List<ElectionUserHavePaticipanted_Model>>(
       future: _danhsachbaucuFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
