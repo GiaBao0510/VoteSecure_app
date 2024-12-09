@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:votesecure/src/config/AppConfig_api.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
+import 'package:votesecure/src/presentation/pages/common/listOfVotingHistory/ListOfVotingHistory.dart';
 import 'package:votesecure/src/data/models/ProfileModel.dart';
 import 'package:votesecure/src/domain/repositories/UserRepository.dart';
 import 'package:votesecure/src/presentation/pages/cadre/ListOfCadreJoinedForElection.dart';
@@ -216,6 +217,18 @@ class HomeScreen extends StatelessWidget {
                           builder: (context) => ElectionResultScreen(
                             ID_obj: ID_object,
                           ),
+                        ),
+                      ),
+                    ),
+                    _buildActionCard(
+                      context,
+                      'Lịch sử bỏ phiếu',
+                      CupertinoIcons.arrow_counterclockwise,
+                      Colors.purple,
+                          () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ListOfVotingHistory(ID_object: ID_object, role: 8,)
                         ),
                       ),
                     ),

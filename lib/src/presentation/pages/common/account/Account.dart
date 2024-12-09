@@ -7,6 +7,7 @@ import 'package:votesecure/src/presentation/pages/common/ChangePwd/ChangePwd.dar
 import 'package:votesecure/src/presentation/pages/common/Policy/Policy_private.dart';
 import 'package:votesecure/src/presentation/pages/common/SupportInformationSubmission/SupportInformationSubmission_page.dart';
 import 'package:votesecure/src/presentation/pages/common/profile/Profile.dart';
+import 'package:votesecure/src/presentation/pages/shared/votingInstruction.dart';
 
 class UserAccount extends StatelessWidget {
   static const routeName = 'user-account';
@@ -129,7 +130,12 @@ class UserAccount extends StatelessWidget {
               _buildProfileOption(
                 icon: Icons.info,
                 title: 'Xem hướng dẫn bỏ phiếu',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => VotingInstructionScreen())
+                  );
+                },
               ),
               _buildProfileOption(
                 icon: Icons.password_rounded,

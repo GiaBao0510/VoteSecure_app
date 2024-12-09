@@ -450,6 +450,11 @@ class _BallotFormState extends State<BallotForm> {
                             ),
                           ),
                         );
+                        // Thêm delay ngắn để người dùng có thể thấy thông báo thành công
+                        await Future.delayed(Duration(milliseconds: 500));
+
+                        // Pop màn hình hiện tại và trở về ListElections với result true
+                        Navigator.of(context).pop(true);
                       }else{
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

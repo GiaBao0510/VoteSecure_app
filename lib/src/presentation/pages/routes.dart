@@ -30,11 +30,12 @@ import 'package:votesecure/src/presentation/pages/cadre/HomCadre.dart';
 import 'package:votesecure/src/presentation/pages/candidate/HomeCadidate.dart';
 import 'package:votesecure/src/presentation/pages/shared/VerificationOtpAfterLogin.dart';
 import 'package:votesecure/src/presentation/pages/shared/VerificationOpt_ForgotPwd.dart';
-import 'package:votesecure/src/presentation/pages/voter/ListOfVotingHistory.dart';
+import 'package:votesecure/src/presentation/pages/common/listOfVotingHistory/ListOfVotingHistory.dart';
 import 'package:votesecure/src/presentation/pages/voter/UserInformationAfterScanningTheCode_page.dart';
 import 'package:votesecure/src/presentation/pages/common/ElectionCalender/ElectionCalender.dart';
 import 'package:votesecure/src/presentation/pages/common/account/Account.dart';
 import 'package:votesecure/src/presentation/pages/voter/ListElections.dart';
+import 'package:votesecure/src/presentation/pages/shared/votingInstruction.dart';
 
 final HoSoNguoiDung = new ProfileModel(
     HoTen: '', GioiTinh: '', DiaChi: '', Email: '', SDT: '', HinhAnh: '',
@@ -80,5 +81,6 @@ final Map<String, WidgetBuilder> routes = {
   ElectionResultScreen.routeName: (ctx) => ElectionResultScreen(ID_obj: '',),
   ListOfCandidatesBasedOnElectionResultScreen.routeName: (ctx) => ListOfCandidatesBasedOnElectionResultScreen(ngayBD: '',),
   ChangePasswordPage.routeName: (ctx) => ChangePasswordPage(ID_user: '',),
-  ListOfVotingHistory.routeName: (ctx) => ListOfVotingHistory(ID_object: '',),
+  ListOfVotingHistory.routeName: (ctx) => ListOfVotingHistory(ID_object: '', role: 0,),
+  VotingInstructionScreen.routeName: (ctx) => VotingInstructionScreen(),
 };

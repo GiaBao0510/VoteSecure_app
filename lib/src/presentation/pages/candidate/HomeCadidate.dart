@@ -12,6 +12,7 @@ import 'package:votesecure/src/presentation/pages/common/ElectionResult/Election
 import 'package:votesecure/src/presentation/pages/common/Notification/AnnouncemantPage.dart';
 import 'package:votesecure/src/presentation/pages/common/SupportInformationSubmission/SupportInformationSubmission_page.dart';
 import 'package:votesecure/src/presentation/pages/common/account/Account.dart';
+import 'package:votesecure/src/presentation/pages/common/listOfVotingHistory/ListOfVotingHistory.dart';
 import 'package:votesecure/src/presentation/widgets/TitleAppBarForHomePage.dart';
 
 class Homecadidate extends StatefulWidget {
@@ -192,6 +193,17 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         gradient: [Color(0xFFEC407A), Color(0xFFC2185B)],
+      ),
+      MenuOption(
+        title: 'Lịch sử\nbỏ phiếu',
+        icon: CupertinoIcons.arrow_counterclockwise_circle,
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ListOfVotingHistory(ID_object: ID_object, role: 2,),
+          ),
+        ),
+        gradient: [Color(0xFF26C6DA), Color(0xFF0097A7)],
       ),
     ];
 

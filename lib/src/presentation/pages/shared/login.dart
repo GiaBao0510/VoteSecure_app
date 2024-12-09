@@ -46,9 +46,7 @@ class _loginPagesState extends State<loginPages> {
     return //Maàu nền
       Positioned(
           child: Container(
-              width: double.infinity,
-              height: double.infinity,
-
+              width: double.infinity, height: double.infinity,
               decoration: const BoxDecoration(
                   image: DecorationImage(
                       image: AssetImage('assets/images/backgroundlogin.jpg'),

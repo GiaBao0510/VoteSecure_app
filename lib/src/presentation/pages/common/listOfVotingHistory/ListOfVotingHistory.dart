@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:votesecure/src/core/utils/WidgetLibrary.dart';
 import 'package:votesecure/src/data/models/VotingHistoryModel.dart';
+import 'package:votesecure/src/domain/repositories/CadreRepository.dart';
+import 'package:votesecure/src/domain/repositories/CandidateRepository.dart';
 import 'package:votesecure/src/domain/repositories/VoterRepository.dart';
 import 'package:votesecure/src/presentation/pages/shared/LoadingPage.dart';
 import 'package:votesecure/src/presentation/widgets/TitleAppBar.dart';
@@ -12,22 +14,26 @@ import 'package:votesecure/src/presentation/widgets/searchBar.dart';
 class ListOfVotingHistory extends StatefulWidget {
   static const routeName = 'List-Of-Voting-History';
   final String ID_object;
-  const ListOfVotingHistory({super.key, required this.ID_object});
+  final int role;
+  const ListOfVotingHistory({super.key, required this.ID_object,  required this.role});
 
   @override
-  State<ListOfVotingHistory> createState() => _ListOfVotingHistoryState(ID_object: ID_object);
+  State<ListOfVotingHistory> createState() => _ListOfVotingHistoryState(ID_object: ID_object, role: role);
 }
 
 class _ListOfVotingHistoryState extends State<ListOfVotingHistory> {
   //Thuộc tính
   final String ID_object;
+  final int role;
   WidgetlibraryState widgetLibraryState = WidgetlibraryState();
   final VoterRepository  voterRepository = VoterRepository();
+  final CandidateRepository candidateRepository = CandidateRepository();
+  final CadreRepository cadreRepository = CadreRepository();
   final TextEditingController _searchController = TextEditingController();
   late Future<List<VotingHistoryModel>> _danhsachbaucuFuture;
   List<VotingHistoryModel> _fillDanhSachBauCuList = [];
   List<VotingHistoryModel> _danhSachBauCuList = [];
-  _ListOfVotingHistoryState({required this.ID_object});
+  _ListOfVotingHistoryState({required this.ID_object, required this.role});
 
   @override
   void initState() {
@@ -43,10 +49,31 @@ class _ListOfVotingHistoryState extends State<ListOfVotingHistory> {
   }
 
   //Load danh sách bầu củ
-  Future<void> _loadData() async{
-    final controller = Provider.of<VoterRepository>(context, listen: false);
-    _danhsachbaucuFuture = controller.GetListOfVotingHistory(context, ID_object);
-    _danhsachbaucuFuture.then((kybaucu) {
+  Future<void> _loadData() async {
+    late final Future<List<VotingHistoryModel>> votingHistoryFuture;
+
+    switch (role) {
+      case 2:
+        final controller = Provider.of<CandidateRepository>(context, listen: false);
+        votingHistoryFuture = controller.GetListOfVotingHistory(context, ID_object);
+        break;
+      case 8:
+        final controller = Provider.of<CadreRepository>(context, listen: false);
+        votingHistoryFuture = controller.GetListOfVotingHistory(context, ID_object);
+        break;
+      case 5:
+        final controller = Provider.of<VoterRepository>(context, listen: false);
+        votingHistoryFuture = controller.GetListOfVotingHistory(context, ID_object);
+        break;
+      default:
+        throw Exception('Invalid role: $role');
+    }
+
+    setState(() {
+      _danhsachbaucuFuture = votingHistoryFuture;
+    });
+
+    votingHistoryFuture.then((kybaucu) {
       setState(() {
         _danhSachBauCuList = kybaucu;
         _fillDanhSachBauCuList = kybaucu;
