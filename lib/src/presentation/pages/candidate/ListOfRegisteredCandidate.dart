@@ -165,7 +165,7 @@ class _ListofRegisteredCandidateScreenState
   Widget _buildElectionCard(ElectionUserHavePaticipanted_Model election) {
     final bool hasVoted = election.ghiNhan == "1";
     final bool isExpired = DateTime.now().isAfter(
-      DateTime.parse(election.ngayBD ?? DateTime.now().toString()),
+      DateTime.parse(election.ngayKT ?? DateTime.now().toString()),
     );
 
     // Chọn gradient màu dựa trên trạng thái
